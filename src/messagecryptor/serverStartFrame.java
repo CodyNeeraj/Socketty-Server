@@ -9,14 +9,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class serverStartFrame extends javax.swing.JFrame
 {
 
+    private static final long serialVersionUID = 1L;
+
     public serverStartFrame ()
     {
         try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //will set the deafault installed l&F as windows Native
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+            //will set the default installed l&F as windows Native
+        }
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
         {
             Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -170,26 +173,31 @@ public class serverStartFrame extends javax.swing.JFrame
     {//GEN-HEADEREND:event_serverStartActionPerformed
         try
         {
-            String data = portField.getText();
-            int port = Integer.parseInt(data);
+            int port = Integer.parseInt(portField.getText());
             if (port < 10 | port >= 65536)
             {
-                System.out.println("Enter correct port");
-                JOptionPane.showMessageDialog(this, "Length is not as specified", "Error", JOptionPane.ERROR_MESSAGE);
-                port = Integer.parseInt(portField.getText());
+                System.out.println("Enter port within range chewtiye");
+                JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
             }
-            else if (data.isEmpty())
+            else
             {
-                JOptionPane.showMessageDialog(this, "Fields can't be left Empty", "Input Error", JOptionPane.WARNING_MESSAGE);
-                port = Integer.parseInt(portField.getText());
+                new serverChatConsole().setVisible(true);
             }
-            System.out.println("The port you entered is "+port);
-        } 
+            System.out.println("The port you entered is " + port);
+        }
         catch (NumberFormatException e)
         {
-            JOptionPane.showMessageDialog(this, "Port can only be an integer", "Exception", JOptionPane.ERROR_MESSAGE);
+            if (portField.getText().isEmpty())
+            {
+                JOptionPane.showMessageDialog(this, "Port cannot be left Empty", "Port Error", JOptionPane.WARNING_MESSAGE);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Port can only be a Number", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
+        System.out.println(passField.getText());
     }//GEN-LAST:event_serverStartActionPerformed
 
     private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
