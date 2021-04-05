@@ -1,5 +1,8 @@
-package messagecryptor;
+package chatServer;
 
+import java.io.IOException;
+import java.net.BindException;
+import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -10,6 +13,7 @@ public class serverStartFrame extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
+    private ServerSocket ss = null;
 
     public serverStartFrame ()
     {
@@ -79,7 +83,7 @@ public class serverStartFrame extends javax.swing.JFrame
             }
         });
 
-        portField.setToolTipText("Possibility of non-availability of specified port as being used by some another application at the same time , You are requested to change it to some other value (The common unsused values are from 1000 - 65535 )");
+        portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
         portField.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -171,19 +175,15 @@ public class serverStartFrame extends javax.swing.JFrame
 
     private void serverStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStartActionPerformed
     {//GEN-HEADEREND:event_serverStartActionPerformed
+        boolean isBindException, isIOException, isIllegalArgument;
+        isBindException = isIOException = isIllegalArgument = false;
+        int port = 0;
+
         try
         {
-            int port = Integer.parseInt(portField.getText());
-            if (port < 10 | port >= 65536)
-            {
-                System.out.println("Enter port within range chewtiye");
-                JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
-            }
-            else
-            {
-                new serverChatConsole().setVisible(true);
-            }
-            System.out.println("The port you entered is " + port);
+            port = Integer.parseInt(portField.getText());
+            ss = new ServerSocket(port);
+            //ServerSocket ss = new ServerSocket(port);
         }
         catch (NumberFormatException e)
         {
@@ -197,7 +197,54 @@ public class serverStartFrame extends javax.swing.JFrame
             }
         }
 
-        System.out.println(passField.getText());
+        /* try
+        {
+            ss = new ServerSocket(port);
+        }*/
+        catch (BindException b) //for serversocket object
+        {
+            isBindException = true; //setted flag to true (only if ocurred)
+            JOptionPane.showMessageDialog(this, "Port Already being used by some other application", "Port Already Occupied", JOptionPane.WARNING_MESSAGE);
+            System.out.println("Bind Exception Ocurred");
+        }
+        catch (IOException e)
+        {
+            isIOException = true;
+            JOptionPane.showMessageDialog(this, "Exception ocurred in I/O of the program\nwhile making connection request", "I/O Error", JOptionPane.WARNING_MESSAGE);
+            System.out.println("IOException ocurred");
+        }
+        catch (IllegalArgumentException e)
+        {
+            isIllegalArgument = true;
+            //JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
+        }
+
+        if (port < 10)
+        {
+            JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
+        }
+        else
+        {
+            if (isBindException | isIOException | isIllegalArgument)
+            {
+                System.out.println("An error ocurred!,\nTry changing the port");
+            }
+            if (!isBindException && !isIOException && !isIllegalArgument)
+            {
+                try
+                {
+                    System.out.println("Success, the port entred was " + port);
+                    System.out.println("Ist wale frame da " + ss);
+                    new serverChatConsole(ss, port).setVisible(true);
+                    this.dispose();
+                    this.setVisible(false);
+                }
+                catch (IOException ex)
+                {
+                    Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }//GEN-LAST:event_serverStartActionPerformed
 
     private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
@@ -220,14 +267,6 @@ public class serverStartFrame extends javax.swing.JFrame
      */
     public static void main (String args[])
     {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
         {
