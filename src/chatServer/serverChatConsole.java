@@ -5,13 +5,10 @@
  */
 package chatServer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -27,6 +24,10 @@ public class serverChatConsole extends javax.swing.JFrame
     private static final long serialVersionUID = 1L;
     private ServerSocket ss = null;
     private int port;
+    private long start;
+    private long end;
+    private DateTimeFormatter pattern;
+    private LocalDateTime now;
 
     /**
      * Creates new form serverChatConsole
@@ -112,10 +113,11 @@ public class serverChatConsole extends javax.swing.JFrame
         dateAndTime = new javax.swing.JLabel();
         stopServerBtn = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
-        connectedSince = new javax.swing.JLabel();
         public_Ip_Port = new javax.swing.JTextField();
         loc_Ip_Port = new javax.swing.JTextField();
         refreshBtn = new javax.swing.JButton();
+        sessionRefreshBtn = new javax.swing.JButton();
+        connectedSince = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
@@ -124,6 +126,16 @@ public class serverChatConsole extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener()
+        {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt)
+            {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt)
+            {
+            }
+        });
 
         msgToSend.setColumns(20);
         msgToSend.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
@@ -245,20 +257,7 @@ public class serverChatConsole extends javax.swing.JFrame
         jLabel11.setText("Today");
 
         dateAndTime.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        dateAndTime.setText("<<<Date and time>>>");
-        dateAndTime.addAncestorListener(new javax.swing.event.AncestorListener()
-        {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt)
-            {
-                dateAndTimeAncestorAdded(evt);
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
-        });
+        dateAndTime.setText("Getting date");
 
         stopServerBtn.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         stopServerBtn.setText("STOP");
@@ -271,49 +270,61 @@ public class serverChatConsole extends javax.swing.JFrame
         });
 
         jLabel13.setFont(new java.awt.Font("Segoe UI Semibold", 0, 13)); // NOI18N
-        jLabel13.setText("Session");
-
-        connectedSince.setText("<< Connected Since HH;MM;SS>>");
+        jLabel13.setText("UpTime");
 
         public_Ip_Port.setEditable(false);
         public_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
-        public_Ip_Port.setText("Loading IP....");
-        public_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
+        public_Ip_Port.setText("Loading....");
+        public_Ip_Port.addMouseListener(new java.awt.event.MouseAdapter()
         {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
+            public void mouseEntered(java.awt.event.MouseEvent evt)
             {
-            }
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt)
-            {
-                public_Ip_PortAncestorAdded(evt);
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
-            {
+                public_Ip_PortMouseEntered(evt);
             }
         });
 
         loc_Ip_Port.setEditable(false);
         loc_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
         loc_Ip_Port.setText("Fetching Details....");
-        loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
+
+        refreshBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh.png"))); // NOI18N
+        refreshBtn.setToolTipText("Refresh");
+        refreshBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                refreshBtnActionPerformed(evt);
+            }
+        });
+
+        sessionRefreshBtn.setIcon(refreshBtn.getIcon());
+        sessionRefreshBtn.addAncestorListener(new javax.swing.event.AncestorListener()
         {
             public void ancestorMoved(javax.swing.event.AncestorEvent evt)
             {
             }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
-                loc_Ip_PortAncestorAdded(evt);
+                sessionRefreshBtnAncestorAdded(evt);
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
             {
             }
         });
-
-        refreshBtn.addActionListener(new java.awt.event.ActionListener()
+        sessionRefreshBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                refreshBtnActionPerformed(evt);
+                sessionRefreshBtnActionPerformed(evt);
+            }
+        });
+
+        connectedSince.setText("0  Secs");
+        connectedSince.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                connectedSinceActionPerformed(evt);
             }
         });
 
@@ -332,50 +343,55 @@ public class serverChatConsole extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jSeparator1)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(80, 80, 80)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(80, 80, 80)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel6)))
-                                    .addComponent(jLabel1))
-                                .addGap(5, 5, 5)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)))
+                            .addComponent(jLabel1))
+                        .addGap(5, 5, 5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(serverStatus)
-                                    .addComponent(noOfClients))
-                                .addGap(25, 25, 25)
-                                .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(22, 22, 22))
+                                .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(serverStatus)
+                            .addComponent(noOfClients))
+                        .addGap(25, 25, 25)
+                        .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addGap(28, 28, 28)
-                                .addComponent(dateAndTime))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel13)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel13)
+                                    .addComponent(jLabel11))
                                 .addGap(18, 18, 18)
-                                .addComponent(connectedSince)))
-                        .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(dateAndTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(45, 45, 45))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(connectedSince, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(sessionRefreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7))
+                                .addGap(19, 19, 19)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel9)
@@ -405,8 +421,8 @@ public class serverChatConsole extends javax.swing.JFrame
                                     .addGap(241, 241, 241)
                                     .addComponent(msgSendBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(stopServerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(22, Short.MAX_VALUE))))
+                            .addComponent(stopServerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -423,7 +439,6 @@ public class serverChatConsole extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel6)
-                                .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -431,8 +446,9 @@ public class serverChatConsole extends javax.swing.JFrame
                                     .addComponent(noOfClients)
                                     .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(1, 1, 1))))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -442,7 +458,7 @@ public class serverChatConsole extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(msgSendBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -480,7 +496,8 @@ public class serverChatConsole extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
-                            .addComponent(connectedSince)))
+                            .addComponent(sessionRefreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(connectedSince, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(stopServerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -522,24 +539,6 @@ public class serverChatConsole extends javax.swing.JFrame
     }//GEN-LAST:event_stopServerBtnActionPerformed
 
 
-    private void loc_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_loc_Ip_PortAncestorAdded
-    {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
-    }//GEN-LAST:event_loc_Ip_PortAncestorAdded
-
-    private void public_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_public_Ip_PortAncestorAdded
-    {//GEN-HEADEREND:event_public_Ip_PortAncestorAdded
-        String ip = new IpFetcher().pub_Ip();
-        if (ip.equalsIgnoreCase("Offline"))
-        {
-            public_Ip_Port.setText("Offline");
-        }
-        else
-        {
-            public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
-        }
-    }//GEN-LAST:event_public_Ip_PortAncestorAdded
-
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
         loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
@@ -555,10 +554,47 @@ public class serverChatConsole extends javax.swing.JFrame
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
 
-    private void dateAndTimeAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_dateAndTimeAncestorAdded
-    {//GEN-HEADEREND:event_dateAndTimeAncestorAdded
-     
-    }//GEN-LAST:event_dateAndTimeAncestorAdded
+    private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
+    {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
+        String ip = new IpFetcher().pub_Ip();
+        if (ip.equalsIgnoreCase("Offline"))
+        {
+            public_Ip_Port.setText("Offline");
+        }
+        else
+        {
+            public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
+        }
+    }//GEN-LAST:event_public_Ip_PortMouseEntered
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowGainedFocus
+    {//GEN-HEADEREND:event_formWindowGainedFocus
+        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+        pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
+        now = LocalDateTime.now();
+        dateAndTime.setText(pattern.format(now));
+    }//GEN-LAST:event_formWindowGainedFocus
+
+    private void sessionRefreshBtnAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_sessionRefreshBtnAncestorAdded
+    {//GEN-HEADEREND:event_sessionRefreshBtnAncestorAdded
+        start = System.currentTimeMillis();
+    }//GEN-LAST:event_sessionRefreshBtnAncestorAdded
+
+    private void sessionRefreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sessionRefreshBtnActionPerformed
+    {//GEN-HEADEREND:event_sessionRefreshBtnActionPerformed
+        end = System.currentTimeMillis();
+        long elapsedtime = (end - start) / 1000;
+        connectedSince.setText(new StringBuilder().append(elapsedtime).append(" Secs").toString());
+        pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
+        now = LocalDateTime.now();
+        dateAndTime.setText(pattern.format(now));
+
+    }//GEN-LAST:event_sessionRefreshBtnActionPerformed
+
+    private void connectedSinceActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_connectedSinceActionPerformed
+    {//GEN-HEADEREND:event_connectedSinceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_connectedSinceActionPerformed
 
     /**
      * @param args the command line arguments
@@ -574,7 +610,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> activeClientList;
-    private javax.swing.JLabel connectedSince;
+    private javax.swing.JTextField connectedSince;
     private javax.swing.JLabel dateAndTime;
     private javax.swing.JTextArea decodedMsgPane;
     private javax.swing.JComboBox<String> encAlgoType;
@@ -612,6 +648,7 @@ public class serverChatConsole extends javax.swing.JFrame
     private javax.swing.JButton refreshBtn;
     private javax.swing.JButton sendFileBtn;
     private javax.swing.JLabel serverStatus;
+    private javax.swing.JButton sessionRefreshBtn;
     private javax.swing.JButton slctFilePathBtn;
     private javax.swing.JButton stopServerBtn;
     // End of variables declaration//GEN-END:variables
