@@ -234,10 +234,8 @@ public class serverStartFrame extends javax.swing.JFrame
                 try
                 {
                     System.out.println("Success, the port entred was " + port);
-                    System.out.println("Ist wale frame da " + ss);
                     new serverChatConsole(ss, port).setVisible(true);
                     this.dispose();
-                    this.setVisible(false);
                 }
                 catch (IOException ex)
                 {
