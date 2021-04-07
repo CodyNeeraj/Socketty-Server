@@ -14,9 +14,11 @@ import java.net.UnknownHostException;
 public class IpFetcher
 {
 
+    private InetAddress localhost;
+    private String public_ip;
+
     public String loc_Ip ()
     {
-        InetAddress localhost;
         try
         {
             localhost = InetAddress.getLocalHost();
@@ -30,8 +32,6 @@ public class IpFetcher
 
     public String pub_Ip ()
     {
-        String public_ip;
-
         try
         {
             //External IP tools API to get Http response in the form of text

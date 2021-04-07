@@ -28,6 +28,8 @@ public class serverChatConsole extends javax.swing.JFrame
     private long end;
     private DateTimeFormatter pattern;
     private LocalDateTime now;
+    private boolean isAlreadyEntered; //default value - for the first time
+    private StringBuilder builder;
 
     /**
      * Creates new form serverChatConsole
@@ -39,6 +41,8 @@ public class serverChatConsole extends javax.swing.JFrame
     public serverChatConsole (ServerSocket ss, int port) throws IOException
     {
         this.ss = ss;
+        this.port = port;
+
         /* try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -50,7 +54,6 @@ public class serverChatConsole extends javax.swing.JFrame
             Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
         }*/
         initComponents();
-        this.port = port;
     }
 
     public serverChatConsole ()
@@ -103,7 +106,6 @@ public class serverChatConsole extends javax.swing.JFrame
         jLabel10 = new javax.swing.JLabel();
         serverStatus = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        noOfClients = new javax.swing.JLabel();
         activeClientList = new javax.swing.JComboBox<>();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
@@ -224,16 +226,13 @@ public class serverChatConsole extends javax.swing.JFrame
         jLabel9.setText("Sent");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel10.setText("Status");
+        jLabel10.setText("Current Status");
 
         serverStatus.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        serverStatus.setText("<<<Status Here>>>");
+        serverStatus.setText("<<<Status Here with no. of clients>>>");
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel12.setText("Connected Clients");
-
-        noOfClients.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        noOfClients.setText("<<Clients>>");
+        jLabel12.setText("Active Clients");
 
         activeClientList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         activeClientList.addActionListener(new java.awt.event.ActionListener()
@@ -319,6 +318,7 @@ public class serverChatConsole extends javax.swing.JFrame
             }
         });
 
+        connectedSince.setEditable(false);
         connectedSince.setText("0  Secs");
         connectedSince.addActionListener(new java.awt.event.ActionListener()
         {
@@ -364,11 +364,10 @@ public class serverChatConsole extends javax.swing.JFrame
                             .addComponent(jLabel10)
                             .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(serverStatus)
-                            .addComponent(noOfClients))
-                        .addGap(25, 25, 25)
-                        .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(serverStatus))
+                        .addGap(13, 13, 13))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -443,7 +442,6 @@ public class serverChatConsole extends javax.swing.JFrame
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel12)
-                                    .addComponent(noOfClients)
                                     .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(1, 1, 1))))
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -494,10 +492,11 @@ public class serverChatConsole extends javax.swing.JFrame
                             .addComponent(jLabel11)
                             .addComponent(dateAndTime))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
-                            .addComponent(sessionRefreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(connectedSince, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(sessionRefreshBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel13)
+                                .addComponent(connectedSince, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(stopServerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -556,14 +555,25 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
     {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
-        String ip = new IpFetcher().pub_Ip();
-        if (ip.equalsIgnoreCase("Offline"))
+        if (isAlreadyEntered == false)
         {
-            public_Ip_Port.setText("Offline");
+            isAlreadyEntered = Boolean.TRUE;
+            //setting below condition to be true always after now on (first entrance of mouse)
+            String ip = new IpFetcher().pub_Ip();
+            if (ip.equalsIgnoreCase("Offline"))
+            {
+                public_Ip_Port.setText("Offline");
+            }
+            else
+            {
+                public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
+            }
         }
-        else
+
+        if (isAlreadyEntered == true)
         {
-            public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
+            //do nothing if mouse entered next time again from now on 
+            //(solved the problem of UI hanging if hovered again and again)
         }
     }//GEN-LAST:event_public_Ip_PortMouseEntered
 
@@ -582,9 +592,23 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void sessionRefreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sessionRefreshBtnActionPerformed
     {//GEN-HEADEREND:event_sessionRefreshBtnActionPerformed
+        builder = new StringBuilder();
         end = System.currentTimeMillis();
         long elapsedtime = (end - start) / 1000;
-        connectedSince.setText(new StringBuilder().append(elapsedtime).append(" Secs").toString());
+        if (elapsedtime > 59)
+        {
+            double time = elapsedtime / 60f;
+            double temp = (Math.floor(time * 100) / 100);
+            // builder.append(String.format("%.3f", time)).append(" Mins");
+            builder.append(temp).append(" Mins");
+            connectedSince.setText(builder.toString());
+        }
+        else
+        {
+            builder.append(elapsedtime).append(" Secs");
+            connectedSince.setText(builder.toString());
+        }
+
         pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
         now = LocalDateTime.now();
         dateAndTime.setText(pattern.format(now));
@@ -640,7 +664,6 @@ public class serverChatConsole extends javax.swing.JFrame
     private javax.swing.JTextField loc_Ip_Port;
     private javax.swing.JButton msgSendBtn;
     private javax.swing.JTextArea msgToSend;
-    private javax.swing.JLabel noOfClients;
     private javax.swing.JButton opnDecodedBtn;
     private javax.swing.JButton opnEncodedBtn;
     private javax.swing.JTextField public_Ip_Port;
