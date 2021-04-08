@@ -3,7 +3,8 @@
 <properties>
 <comment/>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SelectedMethodsMode_SELECTION_FLAG">chatServer.serverChatConsole,local_Ip_PortAncestorAdded,(Ljavax/swing/event/AncestorEvent;)V </entry>
-<entry key="ACTIVATED_FEATURES">#org.netbeans.modules.profiler.v2.features.MonitorFeature@</entry>
+<entry key="ACTIVATED_FEATURES">#org.netbeans.modules.profiler.v2.features.MonitorFeature@#org.netbeans.modules.profiler.v2.features.MethodsFeature@</entry>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SETTINGS_FLAG">true</entry>
-<entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_MODE_FLAG">SelectedMethodsMode</entry>
+<entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_MODE_FLAG">AllClassesMode</entry>
+<entry key="SINGLE_FEATURE">false</entry>
 </properties>

@@ -5,14 +5,18 @@
  */
 package chatServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -30,6 +34,7 @@ public class serverChatConsole extends javax.swing.JFrame
     private LocalDateTime now;
     private boolean isAlreadyEntered; //default value - for the first time
     private StringBuilder builder;
+    private String selectedFilePath;
 
     /**
      * Creates new form serverChatConsole
@@ -145,7 +150,6 @@ public class serverChatConsole extends javax.swing.JFrame
         msgToSend.setPreferredSize(jScrollPane1.getPreferredSize());
         jScrollPane1.setViewportView(msgToSend);
 
-        decodedMsgPane.setEditable(false);
         decodedMsgPane.setColumns(20);
         decodedMsgPane.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         decodedMsgPane.setRows(5);
@@ -159,6 +163,13 @@ public class serverChatConsole extends javax.swing.JFrame
 
         msgSendBtn.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         msgSendBtn.setText("Send");
+        msgSendBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                msgSendBtnActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel3.setText("Choose File");
@@ -177,18 +188,20 @@ public class serverChatConsole extends javax.swing.JFrame
 
         sendFileBtn.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         sendFileBtn.setText("Send");
+        sendFileBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                sendFileBtnActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel4.setText("Recieved File");
 
+        filePathField.setEditable(false);
+        filePathField.setColumns(500);
         filePathField.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        filePathField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                filePathFieldActionPerformed(evt);
-            }
-        });
 
         opnEncodedBtn.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         opnEncodedBtn.setText("View Encrypted");
@@ -512,14 +525,32 @@ public class serverChatConsole extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_activeClientListActionPerformed
 
-    private void filePathFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_filePathFieldActionPerformed
-    {//GEN-HEADEREND:event_filePathFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_filePathFieldActionPerformed
-
     private void slctFilePathBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_slctFilePathBtnActionPerformed
     {//GEN-HEADEREND:event_slctFilePathBtnActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); //dafault user path
+
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Audios", "ogg", "amr", "wav", "aac", "ac3", "midi", "mp2", "mp3", "3ga", "3gp", "flaq", "wma"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Videos", "mkv", "mp4", "mov", "wmv", "avi"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Images", "jpg", "png", "gif", "bmp", "svg"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Office", "docx", "xlsx", "pptx", "doc", "ppt", "xls"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Others", "txt", "rdp", "html", "bin", "htm", "xml"));
+
+        /**
+         * (All files) field is implicitly added at the end by deafault
+         */
+        fileChooser.setAcceptAllFileFilterUsed(true);
+
+        int result = fileChooser.showOpenDialog(this);
+        System.out.println(result);
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            File selectedFile = fileChooser.getSelectedFile();
+            filePathField.setText(selectedFile.getAbsolutePath());
+            selectedFilePath = selectedFile.getAbsoluteFile().toString();
+        }
     }//GEN-LAST:event_slctFilePathBtnActionPerformed
 
     private void opnEncodedBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_opnEncodedBtnActionPerformed
@@ -540,8 +571,11 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
-        String ip = new IpFetcher().pub_Ip();
+        utilities obj = new utilities();
+        loc_Ip_Port.setText(obj.loc_Ip() + " : " + port);
+        obj.start();
+        String ip = obj.pub_Ip();
+
         if (ip.equalsIgnoreCase("Offline"))
         {
             public_Ip_Port.setText("Offline");
@@ -549,7 +583,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
         else
         {
-            public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
+            public_Ip_Port.setText(ip + " : " + port);
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
 
@@ -558,15 +592,27 @@ public class serverChatConsole extends javax.swing.JFrame
         if (isAlreadyEntered == false)
         {
             isAlreadyEntered = Boolean.TRUE;
-            //setting below condition to be true always after now on (first entrance of mouse)
-            String ip = new IpFetcher().pub_Ip();
+            /**
+             * @author Codyneeraj
+             * Setting below if(2) condition to be true always as
+             * above from now on (first entrance of mouse) to utilize
+             * the performance improvements by avoiding continuously
+             * checking of public IP from external (API of finding
+             * IPv4 Address) as mentioned in utilities class, this
+             * semantic block will make sure that it should not get
+             * executed again and again causing performance overhead
+             * and application lagging..
+             */
+            utilities obj = new utilities();
+            obj.start();
+            String ip = obj.pub_Ip();
             if (ip.equalsIgnoreCase("Offline"))
             {
                 public_Ip_Port.setText("Offline");
             }
             else
             {
-                public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
+                public_Ip_Port.setText(ip + " : " + port);
             }
         }
 
@@ -579,7 +625,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowGainedFocus
     {//GEN-HEADEREND:event_formWindowGainedFocus
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+        loc_Ip_Port.setText(new utilities().loc_Ip() + " : " + port);
         pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
         now = LocalDateTime.now();
         dateAndTime.setText(pattern.format(now));
@@ -619,6 +665,17 @@ public class serverChatConsole extends javax.swing.JFrame
     {//GEN-HEADEREND:event_connectedSinceActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_connectedSinceActionPerformed
+
+    private void msgSendBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_msgSendBtnActionPerformed
+    {//GEN-HEADEREND:event_msgSendBtnActionPerformed
+        //this button is not working :(
+        JOptionPane.showMessageDialog(rootPane, filePathField.getText(), "File you choosen is", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_msgSendBtnActionPerformed
+
+    private void sendFileBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sendFileBtnActionPerformed
+    {//GEN-HEADEREND:event_sendFileBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sendFileBtnActionPerformed
 
     /**
      * @param args the command line arguments
