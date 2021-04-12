@@ -3,19 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chatServer;
+package main;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import utilities.IpFetcher;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -26,8 +29,10 @@ public class serverChatConsole extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
-    private ServerSocket ss = null;
+    private ServerSocket ss;
+    private Socket soc;
     private int port;
+    private static int count;
     private long start;
     private long end;
     private DateTimeFormatter pattern;
@@ -36,6 +41,10 @@ public class serverChatConsole extends javax.swing.JFrame
     private StringBuilder builder;
     private String selectedFilePath;
     private File selectedFile;
+    static CopyOnWriteArrayList<ClientHandler> ar = new CopyOnWriteArrayList<>();
+    private DataInputStream dis = null;
+    private DataOutputStream dos = null;
+    private serverStartFrame st;
 
     /**
      * Creates new form serverChatConsole
@@ -49,32 +58,137 @@ public class serverChatConsole extends javax.swing.JFrame
         this.ss = ss;
         this.port = port;
 
-        /* try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //will set the default installed l&F as windows Native
-        }
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
-        {
-            Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
         initComponents();
+
+//        try
+//        {
+//        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+//        //will set the default installed l&F as windows Native
+//        }
+//        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+//        {
+//        Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        count++;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run ()
+            {
+                while (true)
+                {
+                    try
+                    {
+                        // wait for new client to connect
+                        soc = ss.accept();
+                        serverStatus.setText("Clients Connected: " + count);
+                        System.out.println("Accepted connection from: " + soc.getInetAddress().getHostName());
+                        // create clienthandler to manage new incoming connection
+                        /*ClientHandler c = new ClientHandler(soc);
+                c.start();*/
+                        dis = new DataInputStream(soc.getInputStream());
+                        dos = new DataOutputStream(soc.getOutputStream());
+
+                        // running infinite loop for getting
+                        // client request
+                        whileChatting();
+                    }
+                    catch (IOException ex)
+                    {
+                        Logger.getLogger(serverChatConsole.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+        }).start();
+
     }
 
-    public serverChatConsole ()
+//    private void runner ()
+//    {
+//        while (true)
+//        {
+//            try
+//            {
+//                // wait for new client to connect
+//                soc = ss.accept();
+//                serverStatus.setText("Clients Connected: " + count);
+//                System.out.println("Accepted connection from: " + soc.getInetAddress().getHostName());
+//                // create clienthandler to manage new incoming connection
+//                /*ClientHandler c = new ClientHandler(soc);
+//                c.start();*/
+//                dis = new DataInputStream(soc.getInputStream());
+//                dos = new DataOutputStream(soc.getOutputStream());
+//
+//                // running infinite loop for getting
+//                // client request
+//                whileChatting();
+//            }
+//            catch (IOException ex)
+//            {
+//                Logger.getLogger(serverChatConsole.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+    private void whileChatting ()
+    {
+        String message = "";
+        do
+        {
+            try
+            {
+                message = dis.readUTF();
+                decodedMsgPane.append("\n" + message);
+            }
+            catch (IOException ex)
+            {
+                Object option[] =
+                {
+                    "Wait", "Exit"
+                };
+                System.out.println("Client[s] disconnected");
+                int choice = JOptionPane.showOptionDialog(
+                        rootPane,
+                        "Everyone disconnected, What to do ?",
+                        "Error",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.ERROR_MESSAGE,
+                        null,
+                        option, option[0]
+                );
+
+                try
+                {
+                    if (choice == JOptionPane.YES_OPTION)
+                    {
+                        soc.close();
+                    }
+                    if (choice == JOptionPane.NO_OPTION)
+                    {
+                        System.exit(0);
+                    }
+
+                }
+                catch (IOException ex1)
+                {
+                    Logger.getLogger(serverChatConsole.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            }
+        }
+        while (!message.equals("/quit"));
+    }
+
+    public void sendMessage (String text)
     {
         try
         {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //will set the default installed l&F as windows Native
+            dos.writeUTF(text);
+            // dos.flush();
         }
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+        catch (Exception ex)
         {
-            Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("No client conncted");
         }
-        initComponents();
     }
 
     /**
@@ -132,6 +246,7 @@ public class serverChatConsole extends javax.swing.JFrame
         jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Server");
         setResizable(false);
         addWindowFocusListener(new java.awt.event.WindowFocusListener()
         {
@@ -257,7 +372,7 @@ public class serverChatConsole extends javax.swing.JFrame
         jLabel10.setText("Current Status");
 
         serverStatus.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        serverStatus.setText("<<<Status Here with no. of clients>>>");
+        serverStatus.setText("Waiting for clients");
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel12.setText("Active Clients");
@@ -327,12 +442,12 @@ public class serverChatConsole extends javax.swing.JFrame
         sessionRefreshBtn.setIcon(refreshBtn.getIcon());
         sessionRefreshBtn.addAncestorListener(new javax.swing.event.AncestorListener()
         {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
                 sessionRefreshBtnAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
-            {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
             {
@@ -394,8 +509,8 @@ public class serverChatConsole extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(serverStatus))
-                        .addGap(13, 13, 13))
+                            .addComponent(serverStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -458,26 +573,27 @@ public class serverChatConsole extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel10)
-                            .addComponent(serverStatus)
-                            .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(5, 5, 5)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(5, 5, 5)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel6)
-                                .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel12)
-                                    .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(1, 1, 1))))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(refreshBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
+                                .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(refreshBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(serverStatus))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(12, 12, 12)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -599,7 +715,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
-        utilities obj = new utilities();
+        IpFetcher obj = new IpFetcher();
         loc_Ip_Port.setText(obj.loc_Ip() + " : " + port);
         obj.start();
         String ip = obj.pub_Ip();
@@ -628,7 +744,8 @@ public class serverChatConsole extends javax.swing.JFrame
              * that it should not get executed again and again causing
              * performance overhead and application lagging..
              */
-            utilities obj = new utilities();
+            IpFetcher obj = new IpFetcher();
+            obj.setPriority(1);
             obj.start();
             String ip = obj.pub_Ip();
             if (ip.equalsIgnoreCase("Offline"))
@@ -650,7 +767,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowGainedFocus
     {//GEN-HEADEREND:event_formWindowGainedFocus
-        loc_Ip_Port.setText(new utilities().loc_Ip() + " : " + port);
+        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
         pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
         now = LocalDateTime.now();
         dateAndTime.setText(pattern.format(now));
@@ -693,6 +810,8 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void msgSendBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_msgSendBtnActionPerformed
     {//GEN-HEADEREND:event_msgSendBtnActionPerformed
+        sendMessage(msgToSend.getText());
+        msgToSend.setText("");
     }//GEN-LAST:event_msgSendBtnActionPerformed
 
     private void sendFileBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sendFileBtnActionPerformed
@@ -751,7 +870,9 @@ public class serverChatConsole extends javax.swing.JFrame
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
         {
-            new serverChatConsole().setVisible(true);
+            // serverChatConsole obj;
+            System.out.println("Main method exceuted ");
+
         });
     }
 

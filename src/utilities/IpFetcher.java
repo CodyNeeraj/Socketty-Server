@@ -1,4 +1,4 @@
-package chatServer;
+package utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
  *
  * @author Neeraj
  */
-public class utilities extends Thread
+public class IpFetcher extends Thread
 {
 
     private InetAddress localhost;
@@ -35,7 +35,7 @@ public class utilities extends Thread
         try
         {
             //External IP tools API to get Http response in the form of text
-           // URL url_name = new URL("https://api.my-ip.io/ip");
+            // URL url_name = new URL("https://api.my-ip.io/ip");
             URL url_name = new URL("https://api.my-ip.io/ip");
             BufferedReader url = new BufferedReader(new InputStreamReader(url_name.openStream()));
             public_ip = url.readLine();

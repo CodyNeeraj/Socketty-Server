@@ -1,4 +1,4 @@
-package chatServer;
+package main;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -231,7 +231,10 @@ public class serverStartFrame extends javax.swing.JFrame
                 try
                 {
                     System.out.println("Success, the port entred was " + port);
-                    new serverChatConsole(ss, port).setVisible(true);
+
+                    serverChatConsole obj1 = new serverChatConsole(ss, port);
+                    obj1.setVisible(true);
+                    //obj1.runner();  //ERROR HERE
                     this.dispose();
                 }
                 catch (IOException ex)
