@@ -8,12 +8,16 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import utilities.IpFetcher;
 
 public class serverStartFrame extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
-    private ServerSocket ss = null;
+    private ServerSocket ss;
+    private boolean isAlreadyEntered;
+    //private String portToParse;
+    private int port  = 0;
 
     public serverStartFrame ()
     {
@@ -50,6 +54,20 @@ public class serverStartFrame extends javax.swing.JFrame
         jLabel4 = new javax.swing.JLabel();
         serverPass = new javax.swing.JLabel();
         passField = new javax.swing.JTextField();
+        activeClientList = new javax.swing.JComboBox<>();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel7 = new javax.swing.JLabel();
+        public_Ip_Port = new javax.swing.JTextField();
+        loc_Ip_Port = new javax.swing.JTextField();
+        refreshBtn = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        serverStatus = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Crpyton Server");
@@ -74,84 +92,183 @@ public class serverStartFrame extends javax.swing.JFrame
         jTextField1.setEditable(false);
         jTextField1.setText("Localhost (127.0.0.1)");
         jTextField1.setToolTipText("Default");
-        jTextField1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jTextField1ActionPerformed(evt);
-            }
-        });
 
         portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
-        portField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                portFieldActionPerformed(evt);
-            }
-        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel3.setText("(10-65535)");
         jLabel3.setToolTipText("");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 1, 15)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Configure Server");
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel4.setText("Configuration");
 
         serverPass.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         serverPass.setText("Password");
 
-        passField.addActionListener(new java.awt.event.ActionListener()
+        activeClientList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        activeClientList.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                passFieldActionPerformed(evt);
+                activeClientListActionPerformed(evt);
             }
         });
+
+        jLabel7.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("Server");
+
+        public_Ip_Port.setEditable(false);
+        public_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
+        public_Ip_Port.setText("Configuration required");
+        public_Ip_Port.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseEntered(java.awt.event.MouseEvent evt)
+            {
+                public_Ip_PortMouseEntered(evt);
+            }
+        });
+
+        loc_Ip_Port.setEditable(false);
+        loc_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
+        loc_Ip_Port.setText("Configuration required");
+
+        refreshBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh.png"))); // NOI18N
+        refreshBtn.setToolTipText("Refresh");
+        refreshBtn.setEnabled(false);
+        refreshBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                refreshBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel5.setText("Local IP :");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel6.setText("Public IP :");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel10.setText("Current Status");
+
+        serverStatus.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        serverStatus.setText("Waiting for clients");
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel12.setText("Active Clients");
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(35, 35, 35)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(35, 35, 35)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(portNumber)
+                                    .addComponent(serverPass))
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(serverStart)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(jLabel3))
+                                        .addComponent(passField)))))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(portNumber)
-                            .addComponent(serverPass))
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(serverStart)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jLabel3))
-                                .addComponent(passField)))))
-                .addGap(18, 18, 18))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6))
+                                .addGap(5, 5, 5)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(serverStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(20, Short.MAX_VALUE))))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel5)
+                                        .addComponent(loc_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(5, 5, 5)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel6)
+                                        .addComponent(public_Ip_Port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(refreshBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel10)
+                                    .addComponent(serverStatus))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel12)
+                                    .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(12, 12, 12))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(11, 11, 11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(portNumber)
                     .addGroup(layout.createSequentialGroup()
@@ -159,13 +276,13 @@ public class serverStartFrame extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addGap(11, 11, 11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(serverPass)
                     .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(11, 11, 11)
                 .addComponent(serverStart)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
@@ -176,8 +293,6 @@ public class serverStartFrame extends javax.swing.JFrame
     {//GEN-HEADEREND:event_serverStartActionPerformed
         boolean isBindException, isIOException, isIllegalArgument;
         isBindException = isIOException = isIllegalArgument = false;
-        int port = 0;
-
         try
         {
             port = Integer.parseInt(portField.getText());
@@ -195,10 +310,7 @@ public class serverStartFrame extends javax.swing.JFrame
                 JOptionPane.showMessageDialog(this, "Port can only be a Number", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        /* try
-        {
-            ss = new ServerSocket(port);
-        }*/ catch (BindException b) //for serversocket object
+        catch (BindException b) //for serversocket object
         {
             isBindException = true; //setted flag to true (only if ocurred)
             JOptionPane.showMessageDialog(this, "Port Already being used by some other application", "Port Already Occupied", JOptionPane.WARNING_MESSAGE);
@@ -228,37 +340,74 @@ public class serverStartFrame extends javax.swing.JFrame
             }
             if (!isBindException && !isIOException && !isIllegalArgument)
             {
-                try
-                {
-                    System.out.println("Success, the port entred was " + port);
+                refreshBtn.setEnabled(true);
+                loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+                public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
 
-                    serverChatConsole obj1 = new serverChatConsole(ss, port);
-                    obj1.setVisible(true);
-                    //obj1.runner();  //ERROR HERE
-                    this.dispose();
-                }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                System.out.println("Success, the port entered was " + port);
+                //here to declare the new coming ports
+
+                //new serverChatConsole(ss, port).setVisible(true);
             }
         }
     }//GEN-LAST:event_serverStartActionPerformed
 
-    private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
-    {//GEN-HEADEREND:event_portFieldActionPerformed
+    private void activeClientListActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_activeClientListActionPerformed
+    {//GEN-HEADEREND:event_activeClientListActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_portFieldActionPerformed
+    }//GEN-LAST:event_activeClientListActionPerformed
 
-    private void passFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_passFieldActionPerformed
-    {//GEN-HEADEREND:event_passFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_passFieldActionPerformed
+    private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
+    {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
+        if (isAlreadyEntered == false)
+        {
+            isAlreadyEntered = Boolean.TRUE;
+            /**
+             * @author Codyneeraj Setting below if(2) condition to be true
+             * always as above from now on (first entrance of mouse) to utilize
+             * the performance improvements by avoiding continuously checking of
+             * public IP from external (API of finding IPv4 Address) as
+             * mentioned in utilities class, this semantic block will make sure
+             * that it should not get executed again and again causing
+             * performance overhead and application lagging..
+             */
+            IpFetcher obj = new IpFetcher();
+            obj.setPriority(1);
+            obj.start();
+            String ip = obj.pub_Ip();
+            if (ip.equalsIgnoreCase("Offline"))
+            {
+                public_Ip_Port.setText("Offline");
+            }
+            else
+            {
+                public_Ip_Port.setText(ip + " : " + port);
+            }
+        }
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jTextField1ActionPerformed
-    {//GEN-HEADEREND:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        if (isAlreadyEntered == true)
+        {
+            //do nothing if mouse entered next time again from now on
+            //(solved the problem of UI hanging if hovered again and again)
+        }
+    }//GEN-LAST:event_public_Ip_PortMouseEntered
+
+    private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
+    {//GEN-HEADEREND:event_refreshBtnActionPerformed
+        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+        IpFetcher obj = new IpFetcher();
+        obj.start();
+        String ip = obj.pub_Ip();
+        if (ip.equalsIgnoreCase("Offline"))
+        {
+            public_Ip_Port.setText("Offline");
+        }
+
+        else
+        {
+            public_Ip_Port.setText(ip + " : " + port);
+        }
+    }//GEN-LAST:event_refreshBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -273,14 +422,28 @@ public class serverStartFrame extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> activeClientList;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField loc_Ip_Port;
     private javax.swing.JTextField passField;
     private javax.swing.JTextField portField;
     private javax.swing.JLabel portNumber;
+    private javax.swing.JTextField public_Ip_Port;
+    private javax.swing.JButton refreshBtn;
     private javax.swing.JLabel serverPass;
     private javax.swing.JButton serverStart;
+    private javax.swing.JLabel serverStatus;
     // End of variables declaration//GEN-END:variables
 }

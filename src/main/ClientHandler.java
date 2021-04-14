@@ -1,184 +1,190 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package main;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ListIterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ *
+ * @author Neeraj
+ */
+// For every client's connection we call this class
 public class ClientHandler extends Thread
 {
 
-    /**
-     * Stores the list of currently used handles as to keep them unique.
-     */
-    private static CopyOnWriteArrayList<String> handles = new CopyOnWriteArrayList<String>();
+    private String clientName;
+    private DataInputStream din;
+    private PrintStream pr;
+    private Socket clientSocket;
+    private final ClientHandler[] threads;
+    private BufferedReader br;
+    private int MAXConnections;
+    private DataOutputStream dos;
 
-    /**
-     * Stores the list of all currently active ClientHandler instances.
-     */
-    private static CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<ClientHandler>();
-
-    /**
-     * Stores the network socket used to interact with the client.
-     */
-    private Socket socket;
-
-    /**
-     * Stores the input stream reader used to receive network messages.
-     */
-    private DataInputStream incoming;
-
-    /**
-     * Stores the output stream writer used to send network messages.
-     */
-    private DataOutputStream outgoing;
-
-    /**
-     * Stores the handle currently being used by the client.
-     */
-    String handle;
-
-    /**
-     * Broadcasts the specified message to all connected clients.
-     *
-     * @param message the message to broadcast
-     */
-    protected static synchronized void broadcast (String message)
+    public ClientHandler (Socket clientSocket, ClientHandler[] threads)
     {
-        synchronized (clients)
-        {
-            ListIterator<ClientHandler> itr = clients.listIterator();
-            ClientHandler current;
-
-            while (itr.hasNext())
-            {
-                try
-                {
-                    current = itr.next();
-                    current.outgoing.writeUTF(message);
-                    current.outgoing.flush();
-                }
-                catch (Exception e)
-                {
-                    System.err.println("Rut roh...");
-                }
-            }
-        }
+        this.clientSocket = clientSocket;
+        this.threads = threads;
+        MAXConnections = threads.length;
     }
 
-    /**
-     * Checks if the specified handle is valid.
-     */
-    private static boolean isValidHandle (String handle)
-    {
-        for (int i = 0; i < handle.length(); i++)
-        {
-            if (!Character.isLetterOrDigit(handle.charAt(i)))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Constructs a new client handler to service the specified client.
-     *
-     * @param socket
-     * @throws java.io.IOException
-     */
-    public ClientHandler (Socket socket) throws IOException
-    {
-        this.socket = socket;
-        incoming = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        outgoing = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-        handle = null;
-    }
-
-    /**
-     * Listens for messages from the client and broadcasts them to all connected clients.
-     */
     @Override
     public void run ()
     {
+        int maxClientsCount = this.MAXConnections;
+        ClientHandler[] threads = this.threads;
+
         try
         {
-            clients.add(this);
-
-            String message;
-
+            /*
+             * Create input and output streams for this client.
+             */
+            din = new DataInputStream(clientSocket.getInputStream());
+            pr = new PrintStream(clientSocket.getOutputStream());
+            br = new BufferedReader(new InputStreamReader(din));
+            String name;
             while (true)
             {
-                message = incoming.readUTF();
-
-                if (message.startsWith("/handle"))
+                pr.println("Enter your name please");
+                name = br.readLine().trim();
+                // name = din.readUTF().trim();
+                if (name.indexOf('@') == -1)
                 {
-                    String[] parts = message.split(" ");
-
-                    if (parts.length == 1)
-                    {
-                        outgoing.writeUTF("You must specify a handle!");
-                    }
-                    else if (!isValidHandle(parts[1]) || parts.length > 2)
-                    {
-                        outgoing.writeUTF("Your handle contains invalid characters!");
-                    }
-                    else
-                    {
-                        if (handles.contains(parts[1]))
-                        {
-                            outgoing.writeUTF("That handle is already in use!");
-                        }
-                        else
-                        {
-                            handle = parts[1];
-                            handles.add(handle);
-                            outgoing.writeUTF("You are now known as " + handle + "!");
-                        }
-                    }
-
-                    outgoing.flush();
+                    pr.println("Thank god the nam doesn't contains @ sign");
+                    break;
                 }
                 else
                 {
-                    if (handle == null)
-                    {
-                        outgoing.writeUTF("You must set a handle using the command /handle <handle>!");
-                        outgoing.flush();
-                    }
-                    else
-                    {
-                        broadcast("[" + handle + "] says: " + message);
-                    }
+                    pr.println("The name should not contain '@' character.");
                 }
             }
 
+            /* Welcome the new the client. */
+            pr.println("Welcome "
+                    + name
+                    + " to our chat room.\nTo leave enter /quit in a new line.");
+
+            synchronized (this)
+            {
+                for (int i = 0; i < maxClientsCount; i++)
+                {
+                    if (threads[i] != null && threads[i] == this)
+                    {
+                        clientName = "@" + name;
+                        break;
+                    }
+                }
+                for (int i = 0; i < maxClientsCount; i++)
+                {
+                    if (threads[i] != null && threads[i] != this)
+                    {
+                        threads[i].pr.println(
+                                "*** A new user "
+                                + name
+                                + " entered the chat room !!! ***");
+                    }
+                }
+            }
+            /* Start the conversation. */
+            while (true)
+            {
+                String line = din.readUTF();
+                if (line.startsWith("/quit"))
+                {
+                    break;
+                }
+                /* If the message is private sent it to the given client. */
+                if (line.startsWith("@"))
+                {
+                    String[] words = line.split("\\s", 2);
+                    if (words.length > 1 && words[1] != null)
+                    {
+                        words[1] = words[1].trim();
+                        if (!words[1].isEmpty())
+                        {
+                            synchronized (this)
+                            {
+                                for (int i = 0; i < maxClientsCount; i++)
+                                {
+                                    if (threads[i] != null && threads[i] != this
+                                            && threads[i].clientName != null
+                                            && threads[i].clientName.equals(words[0]))
+                                    {
+                                        threads[i].pr.println("<" + name + "> " + words[1]);
+                                        /*
+                     * Echo this message to let the client know the private
+                     * message was sent.
+                                         */
+                                        this.pr.println(">" + name + "> " + words[1]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    /* The message is public, broadcast it to all other clients. */
+                    synchronized (this)
+                    {
+                        for (int i = 0; i < maxClientsCount; i++)
+                        {
+                            if (threads[i] != null && threads[i].clientName != null)
+                            {
+                                threads[i].pr.println("<" + name + "> " + line);
+                            }
+                        }
+                    }
+                }
+            }
+            synchronized (this)
+            {
+                for (int i = 0; i < maxClientsCount; i++)
+                {
+                    if (threads[i] != null && threads[i] != this
+                            && threads[i].clientName != null)
+                    {
+                        threads[i].pr.println("*** The user " + name
+                                + " is leaving the chat room !!! ***");
+                    }
+                }
+            }
+            pr.println("*** Bye " + name + " ***");
+
+            /*
+            * Clean up. Set the current thread variable to null so that a new client
+            * could be accepted by the server.
+             */
+            synchronized (this)
+            {
+                for (int i = 0; i < maxClientsCount; i++)
+                {
+                    if (threads[i] == this)
+                    {
+                        threads[i] = null;
+                    }
+                }
+            }
+            /*
+       * Close the output stream, close the input stream, close the socket.
+             */
+            din.close();
+            pr.close();
+            br.close();
+            clientSocket.close();
         }
         catch (IOException e)
         {
-            //e.printStackTrace();
-        }
-        finally
-        {
-            clients.remove(this);
-            handles.remove(handle);
-            if (handle != null)
-            {
-                broadcast("[" + handle + "] has left the room!");
-            }
-
-            try
-            {
-                socket.close();
-            }
-            catch (IOException e)
-            {
-                //e.printStackTrace();
-            }
         }
     }
 }
