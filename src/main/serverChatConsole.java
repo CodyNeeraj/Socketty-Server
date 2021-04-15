@@ -34,7 +34,7 @@ public class serverChatConsole extends javax.swing.JFrame
     private static Socket soc;
     private static final int MAXConnections = 10;
     private int port;
-    private static final ClientHandler threads[] = new ClientHandler[MAXConnections];
+    // private static final ClientHandler threads[] = new ClientHandler[MAXConnections];
     private long start;
     private long end;
     private DateTimeFormatter pattern;
@@ -43,7 +43,7 @@ public class serverChatConsole extends javax.swing.JFrame
     private StringBuilder builder;
     private String selectedFilePath;
     private File selectedFile;
-    static CopyOnWriteArrayList<ClientHandler> ar = new CopyOnWriteArrayList<>();
+    //  static CopyOnWriteArrayList<ClientHandler> ar = new CopyOnWriteArrayList<>();
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
     private serverStartFrame st;
@@ -852,11 +852,11 @@ public class serverChatConsole extends javax.swing.JFrame
                 int i;
                 for (i = 0; i < MAXConnections; i++)
                 {
-                    if (threads[i] == null)
-                    {
-                        (threads[i] = new ClientHandler(soc, threads)).start();
-                        break;
-                    }
+//                    if (threads[i] == null)
+//                    {
+//                        (threads[i] = new ClientHandler(soc, threads)).start();
+//                        break;
+//                    }
                 }
                 if (i == MAXConnections)
                 {
@@ -917,4 +917,5 @@ public class serverChatConsole extends javax.swing.JFrame
     private javax.swing.JButton slctFilePathBtn;
     private javax.swing.JButton stopServerBtn;
     // End of variables declaration//GEN-END:variables
+
 }

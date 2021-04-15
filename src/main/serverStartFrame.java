@@ -3,6 +3,7 @@ package main;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -14,10 +15,13 @@ public class serverStartFrame extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
+
     private ServerSocket ss;
     private boolean isAlreadyEntered;
-    //private String portToParse;
-    private int port  = 0;
+    private int port = 0;
+    private SynchList outputs;
+    private ArrayList<String> online_users;
+    private Transaction transactions;
 
     public serverStartFrame ()
     {
@@ -72,6 +76,13 @@ public class serverStartFrame extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Crpyton Server");
         setResizable(false);
+        addWindowStateListener(new java.awt.event.WindowStateListener()
+        {
+            public void windowStateChanged(java.awt.event.WindowEvent evt)
+            {
+                formWindowStateChanged(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Select IP");
@@ -194,17 +205,14 @@ public class serverStartFrame extends javax.swing.JFrame
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                             .addComponent(jLabel3))
                                         .addComponent(passField)))))
-                        .addContainerGap())
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(4, 4, 4)
                                 .addComponent(jLabel7)
                                 .addGap(18, 18, 18)
@@ -225,9 +233,8 @@ public class serverStartFrame extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(activeClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(serverStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addContainerGap(20, Short.MAX_VALUE))))))))
+                                    .addComponent(serverStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(20, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,6 +296,7 @@ public class serverStartFrame extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    @SuppressWarnings("empty-statement")
     private void serverStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStartActionPerformed
     {//GEN-HEADEREND:event_serverStartActionPerformed
         boolean isBindException, isIOException, isIllegalArgument;
@@ -340,14 +348,54 @@ public class serverStartFrame extends javax.swing.JFrame
             }
             if (!isBindException && !isIOException && !isIllegalArgument)
             {
+                //enabling btn for use now
                 refreshBtn.setEnabled(true);
+
+                //updating fields for useful information
                 loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
                 public_Ip_Port.setText(new IpFetcher().pub_Ip() + " : " + port);
 
-                System.out.println("Success, the port entered was " + port);
-                //here to declare the new coming ports
+                //Updating status field for Active participants info
+                try
+                {
+                    serverStatus.setText("Connected Clients : " + Integer.toString(online_users.size()));
+                }
+                catch (NullPointerException e)
+                {
+                    serverStatus.setText("Connected Clients : " + 0);
+                }
 
-                //new serverChatConsole(ss, port).setVisible(true);
+                outputs = new SynchList();
+                online_users = new ArrayList<>();
+                online_users.add("Everyone");
+                System.out.println("Success, the Server is now listening on the port " + port + ".....");
+//                try
+//                {
+//                    Thread.sleep(10000);
+//                }
+//                catch (InterruptedException ex)
+//                {
+//                    System.out.println("error happened in calling Sleep method before Main initialisation");
+//                    Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+
+                for (int x = 0; x <= 999999999; x++);
+
+                while (true)
+                {
+                    try
+                    {
+                        //Invoking txns class by passing needed values
+                        transactions = new Transaction(outputs.size(), outputs, online_users, ss.accept());
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    transactions.start();
+                    System.out.println("A new client has joined...");
+                }
+
             }
         }
     }//GEN-LAST:event_serverStartActionPerformed
@@ -409,6 +457,18 @@ public class serverStartFrame extends javax.swing.JFrame
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
 
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowStateChanged
+    {//GEN-HEADEREND:event_formWindowStateChanged
+        try
+        {
+            serverStatus.setText("Connected Clients : " + Integer.toString(online_users.size()));
+        }
+        catch (NullPointerException e)
+        {
+            serverStatus.setText("Connected Clients : " + 0);
+        }
+    }//GEN-LAST:event_formWindowStateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -446,4 +506,5 @@ public class serverStartFrame extends javax.swing.JFrame
     private javax.swing.JButton serverStart;
     private javax.swing.JLabel serverStatus;
     // End of variables declaration//GEN-END:variables
+
 }
