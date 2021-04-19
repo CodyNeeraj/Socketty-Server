@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -588,28 +591,35 @@ public class ServerMain extends javax.swing.JFrame
     private void execute () throws Exception
     {
         //Calling start Method
-//        Method.setClients(new ArrayList<>());
-//
-//        // code for making new folder named Data (Currently for testing purposes only..)
-//        File f = new File("data/");
-//        System.out.println(f.getAbsolutePath());
-//        /**
-//         * This above method deletes the old files in the directory named Data(if exists) in
-//         * the Project's root path or AT the base directory of Main Executable file in a
-//         * directory named data, and then replaces it with the new Current session's file
-//         * for keeping a list of data in session for Assessment purposes
-//         */
-//        for (File fs : f.listFiles())
-//        {
-//            System.out.println("Deleting Old  files.... in " + f.toString() + " directory");
-//            fs.delete();
-//            System.out.println("Deletion Successfull");
-//        }
-//        /**
-//         * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
-//         * request by passing it to the this-->Method-->Message-->Client Class.
-//         * for above details see the Project's Hierarchy.
-//         */
+        Method.setClients(new ArrayList<>());
+
+        /**
+         * Code for making new folder named data (will cause the client to freeze if not
+         * properly used, as all the data from each other will reside here only !!
+         */
+        File f = new File("data");//Initialize object to make a new folder named as argument
+        f.mkdir();//Execute the above object
+
+        //Failure of creation of above folder in the root path can cause
+        //null pointer exception -------!!!
+        CurrStatus.setText("Directory named " + f.getPath() + " Created Succesfully");
+        /**
+         * This above method deletes the old files in the directory named Data(if exists) in
+         * the Project's root path or AT the base directory of Main Executable file in a
+         * directory named data, and then replaces it with the new Current session's file
+         * for keeping a list of data in session for Assessment purposes
+         */
+        for (File fs : f.listFiles())
+        {
+            CurrStatus.append("\nDeleting Old  files.... in " + f.getPath() + " directory");
+            fs.delete();
+            CurrStatus.append("\nDeletion Successfull");
+        }
+        /**
+         * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
+         * request by passing it to the this-->Method-->Message-->Client Class.
+         * for above details see the Project's Hierarchy.
+         */
         run = new Thread(() ->
         {
             try
@@ -622,11 +632,9 @@ public class ServerMain extends javax.swing.JFrame
             }
             catch (Exception e)
             {
-                System.out.println(e);
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
                 JOptionPane.showMessageDialog(
                         ServerMain.this,
-                        "Server Closed in Mid of scanning of Incoming client requests !!",
+                        "Server Closed forcefully in during mid scanning\nof incoming client requests !!",
                         "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
