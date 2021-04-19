@@ -84,7 +84,7 @@ public class Client extends Thread
                 {
                     int fileID = Method.getFileID();
                     String fileN = ms.getName();
-                    SimpleDateFormat df = new SimpleDateFormat("dd-LLLL-yyyy/hh:mm:ss:aa ");
+                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyyhhmmssaa");
                     String fileName = fileID + "!" + df.format(new Date()) + "!" + ms.getName().split("!")[0];
                     Method.getTxt().append(fileName);
                     try (FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
