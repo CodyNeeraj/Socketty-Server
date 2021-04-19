@@ -46,7 +46,7 @@ public class serverChatConsole extends javax.swing.JFrame
     //  static CopyOnWriteArrayList<ClientHandler> ar = new CopyOnWriteArrayList<>();
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
-    private serverStartFrame st;
+    private ServerMain st;
 
     /**
      * Creates new form serverChatConsole
@@ -70,7 +70,7 @@ public class serverChatConsole extends javax.swing.JFrame
 //        }
 //        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
 //        {
-//        Logger.getLogger(serverStartFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //
 //        while (true)
