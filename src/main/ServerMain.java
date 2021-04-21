@@ -19,7 +19,6 @@ public class ServerMain extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
-
     private ServerSocket ss;
     private Thread run;
     private boolean isAlreadyEntered;
@@ -520,7 +519,7 @@ public class ServerMain extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
-    private static javax.swing.JComboBox<String> activeUsers;
+    public static javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -587,7 +586,7 @@ public class ServerMain extends javax.swing.JFrame
         }
         if (!dir.exists())
         {
-            CurrStatus.append("\nDirectory not already Exists ...!!");
+            CurrStatus.append("\nDirectory not Exists ...!!");
 
             dir.mkdir();//Execute the above object
             //Failure of creation of above folder in the root path can cause
@@ -622,4 +621,9 @@ public class ServerMain extends javax.swing.JFrame
         run.start();
     }
 
+    public void frameUpdater ()
+    {
+        this.revalidate();
+        this.repaint();
+    }
 }

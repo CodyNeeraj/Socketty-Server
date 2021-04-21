@@ -1,28 +1,49 @@
 package function;
 
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
+import main.ServerMain;
 
 public class Method
 {
 
-    public static int num = 0;
     private static int clientID = 0;
     private static int fileID;
     private static ArrayList<Client> clients;
     private static JTextArea CurrStatus;
-    private static JComboBox<String> activeUsers;
-    private static List<String> usernames = new ArrayList<String>();
+    private static JComboBox activeUsers;
+    private static ArrayList<String> usernames = new ArrayList<>();
+    private static String arr[];
 
     public static int getFileID ()
     {
         return fileID;
     }
 
-    public static void activeUsersSetter ()
+    public static int userslist ()
     {
+        return usernames.size();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void userAdder (String al)
+    {
+        usernames.add(al);
+        System.out.println("Connected users are: " + usernames);
+        arr = usernames.toArray(new String[usernames.size()]);
+        activeUsers = new JComboBox(arr);
+        activeUsers.revalidate();
+        activeUsers.repaint();
+        ServerMain.activeUsers.revalidate();
+        ServerMain.activeUsers.repaint();
+    }
+
+    public static void userRemover (String uname)
+    {
+        System.out.println("THe request came to reove user named: " + uname);
+        usernames.remove(uname);
+        System.out.println("Array after removing the above said user is " + usernames);
     }
 
     public static void setFileID (int aFileID)
@@ -65,13 +86,6 @@ public class Method
     public static int addClient (Client client)
     {
         clients.add(client);
-        num = clientID++;
-        return num;
-    }
-
-    public static void reduceClient ()
-    {
-        num = num - 1;
-        System.out.println("Users left are: " + num);
+        return clientID++;
     }
 }
