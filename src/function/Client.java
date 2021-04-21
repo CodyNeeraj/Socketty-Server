@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
+import static main.ServerMain.activeUsers;
 import message.Message;
 
 public class Client extends Thread
@@ -53,10 +54,15 @@ public class Client extends Thread
                     userName = ms.getName().split("!")[0];
                     time = ms.getName().split("!")[1];
                     profile = ms.getImage();
-                    Method.userAdder(userName);
+                    Method.setUserList(userName);
                     Method.getTxt().append("\nNew User : " + userName + " has connected ...");
-                    Method.getTxt().append("\nTotal connected users until now: " + Method.userslist());
+                    Method.getTxt().append("\nTotal connected users until now: " + Method.getUserNum());
                     //for displaying number of users connected by fetching details from Arraylist in Method class
+                    activeUsers.removeAllItems();
+                    for (String value : Method.getUserList())
+                    {
+                        activeUsers.addItem(value);
+                    }
                     //  list all friend send to new client login
                     for (Client client : Method.getClients())
                     {
@@ -129,7 +135,12 @@ public class Client extends Thread
                 Method.getClients().remove(this);
                 Method.userRemover(this.userName);
                 Method.getTxt().append("\nUser : " + userName + " has been logged out ...");
-                Method.getTxt().append("\nTotal left users : " + Method.userslist());
+                Method.getTxt().append("\nTotal left users : " + Method.getUserNum());
+                activeUsers.removeAllItems();
+                for (String value : Method.getUserList())
+                {
+                    activeUsers.addItem(value);
+                }
                 for (Client s : Method.getClients())
                 {
                     Message ms = new Message();

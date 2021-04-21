@@ -21,15 +21,20 @@ public class Method
         return fileID;
     }
 
-    public static int userslist ()
+    public static int getUserNum ()
     {
         return usernames.size();
     }
 
-    @SuppressWarnings("unchecked")
-    public static void userAdder (String al)
+    public static ArrayList<String> getUserList ()
     {
-        usernames.add(al);
+        return usernames;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void setUserList (String ls)
+    {
+        usernames.add(ls);
         System.out.println("Connected users are: " + usernames);
         arr = usernames.toArray(new String[usernames.size()]);
         activeUsers = new JComboBox(arr);

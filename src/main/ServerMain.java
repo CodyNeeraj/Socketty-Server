@@ -115,7 +115,7 @@ public class ServerMain extends javax.swing.JFrame
         serverPass.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         serverPass.setText("Password");
 
-        activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -495,7 +495,8 @@ public class ServerMain extends javax.swing.JFrame
             serverStatus.setText("Offline");
             serverStopBtn.setEnabled(false);
             CurrStatus.append("\nServer Stopped Succesfully !\n");
-            CurrStatus.append("-----------------------------------------------------------------------------------------------\n");
+            CurrStatus.append("------------------------------------------------"
+                    + "-----------------------------------------------\n");
 
         }
         catch (Exception ex)
