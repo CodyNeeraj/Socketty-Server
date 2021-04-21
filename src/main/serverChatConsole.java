@@ -7,7 +7,7 @@ package main;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import utilities.IpFetcher;
+import function.IpFetcher;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;

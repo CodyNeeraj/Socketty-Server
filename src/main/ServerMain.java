@@ -1,6 +1,7 @@
 package main;
 
 import function.Client;
+import function.IpFetcher;
 import function.Method;
 import java.awt.Color;
 import java.io.File;
@@ -13,7 +14,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import utilities.IpFetcher;
 
 public class ServerMain extends javax.swing.JFrame
 {
@@ -59,7 +59,7 @@ public class ServerMain extends javax.swing.JFrame
         jLabel4 = new javax.swing.JLabel();
         serverPass = new javax.swing.JLabel();
         passField = new javax.swing.JTextField();
-        activeClientList = new javax.swing.JComboBox<>();
+        activeUsers = new javax.swing.JComboBox<>();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel7 = new javax.swing.JLabel();
         public_Ip_Port = new javax.swing.JTextField();
@@ -102,14 +102,8 @@ public class ServerMain extends javax.swing.JFrame
         jTextField1.setText("Localhost (127.0.0.1)");
         jTextField1.setToolTipText("Default");
 
+        portField.setText("5000");
         portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
-        portField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                portFieldActionPerformed(evt);
-            }
-        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel3.setText("(10-65535)");
@@ -122,14 +116,7 @@ public class ServerMain extends javax.swing.JFrame
         serverPass.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         serverPass.setText("Password");
 
-        activeClientList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        activeClientList.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                activeClientListActionPerformed(evt);
-            }
-        });
+        activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -143,13 +130,6 @@ public class ServerMain extends javax.swing.JFrame
             public void mouseEntered(java.awt.event.MouseEvent evt)
             {
                 public_Ip_PortMouseEntered(evt);
-            }
-        });
-        public_Ip_Port.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                public_Ip_PortActionPerformed(evt);
             }
         });
 
@@ -167,13 +147,6 @@ public class ServerMain extends javax.swing.JFrame
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
             {
-            }
-        });
-        loc_Ip_Port.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                loc_Ip_PortActionPerformed(evt);
             }
         });
 
@@ -199,7 +172,7 @@ public class ServerMain extends javax.swing.JFrame
 
         serverStatus.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         serverStatus.setForeground(new java.awt.Color(255, 0, 0));
-        serverStatus.setText("Offline");
+        serverStatus.setText("Not Running..");
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel12.setText("Active Clients");
@@ -216,9 +189,17 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
         CurrStatus.setEditable(false);
         CurrStatus.setColumns(20);
+        CurrStatus.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 11)); // NOI18N
+        CurrStatus.setLineWrap(true);
         CurrStatus.setRows(5);
+        CurrStatus.setTabSize(4);
+        CurrStatus.setWrapStyleWord(true);
+        CurrStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        CurrStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(CurrStatus);
 
         jMenu1.setText("File");
@@ -256,7 +237,7 @@ public class ServerMain extends javax.swing.JFrame
                                     .add(jLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(activeClientList, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                     .add(serverStatus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                             .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 470, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(0, 12, Short.MAX_VALUE))
@@ -311,7 +292,7 @@ public class ServerMain extends javax.swing.JFrame
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(jLabel12)
-                                    .add(activeClientList, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                                    .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -410,15 +391,14 @@ public class ServerMain extends javax.swing.JFrame
                 serverStartBtn.setEnabled(false);
                 serverStopBtn.setEnabled(true);
                 portField.setEnabled(false);
-                serverStatus.setForeground(Color.blue);
-                serverStatus.setText("Online");
+                serverStatus.setForeground(new Color(9, 110, 35));
+                serverStatus.setText("Server is Running...");
 
                 //updating fields for useful information
                 loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
                 public_Ip_Port.setText(new IpFetcher().pub_Ip());
 
                 //Updating status field for Active participants info
-                System.out.println("Success, the Server is now listening on the port " + port + ".....");
                 CurrStatus.append("Success, the Server is now listening on the port " + port + ".....");
 
                 try
@@ -434,11 +414,6 @@ public class ServerMain extends javax.swing.JFrame
             }
         }
     }//GEN-LAST:event_serverStartBtnActionPerformed
-
-    private void activeClientListActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_activeClientListActionPerformed
-    {//GEN-HEADEREND:event_activeClientListActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_activeClientListActionPerformed
 
     private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
     {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
@@ -495,18 +470,18 @@ public class ServerMain extends javax.swing.JFrame
     private void loc_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_loc_Ip_PortAncestorAdded
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
         loc_Ip_Port.setText(new IpFetcher().loc_Ip());
-        IpFetcher obj = new IpFetcher();
-        obj.start();
-        String ip = obj.pub_Ip();
-        if (ip.equalsIgnoreCase("Offline"))
-        {
-            public_Ip_Port.setText("Offline");
-        }
-
-        else
-        {
-            public_Ip_Port.setText(ip);
-        }
+//        IpFetcher obj = new IpFetcher();
+//        obj.start();
+//        String ip = obj.pub_Ip();
+//        if (ip.equalsIgnoreCase("Offline"))
+//        {
+//            public_Ip_Port.setText("Offline");
+//        }
+//
+//        else
+//        {
+//            public_Ip_Port.setText(ip);
+//        }
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
     private void serverStopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStopBtnActionPerformed
@@ -520,7 +495,9 @@ public class ServerMain extends javax.swing.JFrame
             serverStatus.setForeground(Color.red);
             serverStatus.setText("Offline");
             serverStopBtn.setEnabled(false);
-            System.out.println("ServerSocket Closed Succesfully");
+            CurrStatus.append("\nServer Stopped Succesfully !\n");
+            CurrStatus.append("-----------------------------------------------------------------------------------------------\n");
+
         }
         catch (Exception ex)
         {
@@ -528,21 +505,6 @@ public class ServerMain extends javax.swing.JFrame
             serverStopBtn.setEnabled(true);
         }
     }//GEN-LAST:event_serverStopBtnActionPerformed
-
-    private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
-    {//GEN-HEADEREND:event_portFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_portFieldActionPerformed
-
-    private void public_Ip_PortActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_public_Ip_PortActionPerformed
-    {//GEN-HEADEREND:event_public_Ip_PortActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_public_Ip_PortActionPerformed
-
-    private void loc_Ip_PortActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_loc_Ip_PortActionPerformed
-    {//GEN-HEADEREND:event_loc_Ip_PortActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_loc_Ip_PortActionPerformed
 
     /**
      * @param args the command line arguments
@@ -558,7 +520,7 @@ public class ServerMain extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
-    private javax.swing.JComboBox<String> activeClientList;
+    private static javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -594,23 +556,43 @@ public class ServerMain extends javax.swing.JFrame
          * Code for making new folder named data (will cause the client to freeze if not
          * properly used, as all the data from each other will reside here only !!
          */
-        File f = new File("data");//Initialize object to make a new folder named as argument
-        f.mkdir();//Execute the above object
+        File dir = new File("data");//Initialize object to make a new folder named as argument
+        CurrStatus.append("\nChecking the required directory exists ??...");
 
-        //Failure of creation of above folder in the root path can cause
-        //null pointer exception -------!!!
-        CurrStatus.setText("Directory named " + f.getPath() + " Created Succesfully");
-        /**
-         * This above method deletes the old files in the directory named Data(if exists) in
-         * the Project's root path or AT the base directory of Main Executable file in a
-         * directory named data, and then replaces it with the new Current session's file
-         * for keeping a list of data in session for Assessment purposes
-         */
-        for (File fs : f.listFiles())
+        if (dir.exists())
         {
-            CurrStatus.append("\nDeleting Old  files.... in " + f.getPath() + " directory");
-            fs.delete();
-            CurrStatus.append("\nDeletion Successfull");
+            CurrStatus.append("\nDirectory already exists ..!");
+            CurrStatus.append("\nChecking is the Directory empty ..? ");
+            /**
+             * This above method deletes the old files in the directory named Data(if exists) in
+             * the Project's root path or AT the base directory of Main Executable file in a
+             * directory named data, and then replaces it with the new Current session's file
+             * for keeping a list of data in session for Assessment purposes
+             */
+            File f[] = dir.listFiles();
+            if (f.length == 0)
+            {
+                CurrStatus.append("\nDirectory was already clean ...!");
+            }
+            else if (f.length > 0)
+            {
+                CurrStatus.append("\nDetected " + f.length + " files in directory named data/");
+                CurrStatus.append("\nDeleting " + f.length + " files.... in " + dir.getPath() + " directory");
+                for (File fs : dir.listFiles())
+                {
+                    fs.delete();
+                }
+                CurrStatus.append("\nDeletion Successfull");
+            }
+        }
+        if (!dir.exists())
+        {
+            CurrStatus.append("\nDirectory not already Exists ...!!");
+
+            dir.mkdir();//Execute the above object
+            //Failure of creation of above folder in the root path can cause
+            //null pointer exception -------!!!
+            CurrStatus.append("\nDirectory named " + dir.getPath() + " Created Succesfully");
         }
         /**
          * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
@@ -626,6 +608,7 @@ public class ServerMain extends javax.swing.JFrame
                 {
                     new Client(ss.accept());
                 }
+
             }
             catch (Exception e)
             {
@@ -635,6 +618,7 @@ public class ServerMain extends javax.swing.JFrame
                         "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
+
         run.start();
     }
 

@@ -43,6 +43,8 @@ public class Client extends Thread
             in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
             ID = Method.addClient(this);
+            System.out.println("The new Clients connected are: " + Method.num);
+
             //  loop starting get message from client
             while (true)
             {
@@ -53,7 +55,7 @@ public class Client extends Thread
                     userName = ms.getName().split("!")[0];
                     time = ms.getName().split("!")[1];
                     profile = ms.getImage();
-                    Method.getTxt().append("New Client name : " + userName + " has connected ...\n");
+                    Method.getTxt().append("\nNew User : " + userName + " has connected ...");
                     //  list all friend send to new client login
                     for (Client client : Method.getClients())
                     {
@@ -62,6 +64,7 @@ public class Client extends Thread
                         ms.setID(client.getID());
                         ms.setName(client.getUserName() + "!" + client.getTime());
                         ms.setImage(client.getProfile());
+                        Method.activeUsers();
                         out.writeObject(ms);
                         out.flush();
                     }
@@ -83,10 +86,11 @@ public class Client extends Thread
                 else if (status.equals("File"))
                 {
                     int fileID = Method.getFileID();
+                    //file number, by default the file id variable in method class is kept static
                     String fileN = ms.getName();
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyyhhmmssaa");
+                    SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyyhhmmssaa");
                     String fileName = fileID + "!" + df.format(new Date()) + "!" + ms.getName().split("!")[0];
-                    Method.getTxt().append(fileName);
+                    Method.getTxt().append("\n" + userName + " sent " + fileName);
                     try (FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
                     {
                         output.write(ms.getData());
@@ -123,7 +127,7 @@ public class Client extends Thread
             try
             {
                 Method.getClients().remove(this);
-                Method.getTxt().append("Client Name : " + userName + " has been out of this server ...\n");
+                Method.getTxt().append("\nUser : " + userName + " has been logged out ...");
                 for (Client s : Method.getClients())
                 {
                     Message ms = new Message();
@@ -132,6 +136,7 @@ public class Client extends Thread
                     ms.setName(userName);
                     s.getOut().writeObject(ms);
                     s.getOut().flush();
+                    Method.reduceClient();
                 }
             }
             catch (IOException e1)

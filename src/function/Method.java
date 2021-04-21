@@ -1,14 +1,28 @@
 package function;
 
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
 public class Method
 {
 
+    public static int num = 0;
+    private static int clientID = 0;
+    private static int fileID;
+    private static ArrayList<Client> clients;
+    private static JTextArea CurrStatus;
+    private static JComboBox<String> activeUsers;
+    private static List<String> usernames = new ArrayList<String>();
+
     public static int getFileID ()
     {
         return fileID;
+    }
+
+    public static void activeUsersSetter ()
+    {
     }
 
     public static void setFileID (int aFileID)
@@ -51,11 +65,13 @@ public class Method
     public static int addClient (Client client)
     {
         clients.add(client);
-        return clientID++;
+        num = clientID++;
+        return num;
     }
 
-    private static int clientID;
-    private static int fileID;
-    private static ArrayList<Client> clients;
-    private static JTextArea CurrStatus;
+    public static void reduceClient ()
+    {
+        num = num - 1;
+        System.out.println("Users left are: " + num);
+    }
 }
