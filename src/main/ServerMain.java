@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +21,7 @@ public class ServerMain extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
+    private DateTimeFormatter forLog = DateTimeFormatter.ofPattern("HH:mm:ss");
     private ServerSocket ss;
     private Thread run;
     private boolean isAlreadyEntered;
@@ -397,8 +400,9 @@ public class ServerMain extends javax.swing.JFrame
                 loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
                 public_Ip_Port.setText(new IpFetcher().pub_Ip());
 
+                // now = LocalDateTime.now();
                 //Updating status field for Active participants info
-                CurrStatus.append("Success, the Server is now listening on the port " + port + ".....");
+                CurrStatus.append("[" + forLog.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
 
                 try
                 {
@@ -494,9 +498,9 @@ public class ServerMain extends javax.swing.JFrame
             serverStatus.setForeground(Color.red);
             serverStatus.setText("Offline");
             serverStopBtn.setEnabled(false);
-            CurrStatus.append("\nServer Stopped Succesfully !\n");
+            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Server Stopped Succesfully !\n");
             CurrStatus.append("------------------------------------------------"
-                    + "-----------------------------------------------\n");
+                    + "-----------------------------------------------------------\n");
 
         }
         catch (Exception ex)
@@ -557,12 +561,12 @@ public class ServerMain extends javax.swing.JFrame
          * properly used, as all the data from each other will reside here only !!
          */
         File dir = new File("data");//Initialize object to make a new folder named as argument
-        CurrStatus.append("\nChecking the required directory exists ??...");
+        CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Checking the required directory exists ??...");
 
         if (dir.exists())
         {
-            CurrStatus.append("\nDirectory already exists ..!");
-            CurrStatus.append("\nChecking is the Directory empty ..? ");
+            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory already exists ..!");
+            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Checking is the Directory empty ..? ");
             /**
              * This above method deletes the old files in the directory named Data(if exists) in
              * the Project's root path or AT the base directory of Main Executable file in a
@@ -572,27 +576,27 @@ public class ServerMain extends javax.swing.JFrame
             File f[] = dir.listFiles();
             if (f.length == 0)
             {
-                CurrStatus.append("\nDirectory was already clean ...!");
+                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory was already clean ...!");
             }
             else if (f.length > 0)
             {
-                CurrStatus.append("\nDetected " + f.length + " files in directory named data/");
-                CurrStatus.append("\nDeleting " + f.length + " files.... in " + dir.getPath() + " directory");
+                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Detected " + f.length + " files in directory named data/");
+                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Deleting " + f.length + " files.... in " + dir.getPath() + " directory");
                 for (File fs : dir.listFiles())
                 {
                     fs.delete();
                 }
-                CurrStatus.append("\nDeletion Successfull");
+                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Deletion Successfull");
             }
         }
         if (!dir.exists())
         {
-            CurrStatus.append("\nDirectory not Exists ...!!");
+            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory not Exists ...!!");
 
             dir.mkdir();//Execute the above object
             //Failure of creation of above folder in the root path can cause
             //null pointer exception -------!!!
-            CurrStatus.append("\nDirectory named " + dir.getPath() + " Created Succesfully");
+            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory named " + dir.getPath() + " Created Succesfully");
         }
         /**
          * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
@@ -620,11 +624,5 @@ public class ServerMain extends javax.swing.JFrame
         });
 
         run.start();
-    }
-
-    public void frameUpdater ()
-    {
-        this.revalidate();
-        this.repaint();
     }
 }

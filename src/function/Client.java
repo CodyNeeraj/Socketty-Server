@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
@@ -24,6 +26,7 @@ public class Client extends Thread
     private ImageIcon profile;
     private int ID;
     private String time;
+    private final DateTimeFormatter forLog = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     public Client (Socket socket)
     {
@@ -55,14 +58,17 @@ public class Client extends Thread
                     time = ms.getName().split("!")[1];
                     profile = ms.getImage();
                     Method.setUserList(userName);
-                    Method.getTxt().append("\nNew User : " + userName + " has connected ...");
-                    Method.getTxt().append("\nTotal connected users until now: " + Method.getUserNum());
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  New User : " + userName + " has connected ...");
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total connected users until now: " + Method.getUserNum());
                     //for displaying number of users connected by fetching details from Arraylist in Method class
-                    activeUsers.removeAllItems();
-                    for (String value : Method.getUserList())
-                    {
-                        activeUsers.addItem(value);
-                    }
+
+//                    activeUsers.removeAllItems();
+//                    for (String value : Method.getUserList())
+//                    {
+//                        activeUsers.addItem(value);
+//                    }
+                    activeUsers.addItem(userName);
+
                     //  list all friend send to new client login
                     for (Client client : Method.getClients())
                     {
@@ -96,7 +102,7 @@ public class Client extends Thread
                     String fileN = ms.getName();
                     SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyyhhmmssaa");
                     String fileName = fileID + "!" + df.format(new Date()) + "!" + ms.getName().split("!")[0];
-                    Method.getTxt().append("\n" + userName + " sent " + fileName);
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + fileName);
                     try (FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
                     {
                         output.write(ms.getData());
@@ -134,13 +140,15 @@ public class Client extends Thread
             {
                 Method.getClients().remove(this);
                 Method.userRemover(this.userName);
-                Method.getTxt().append("\nUser : " + userName + " has been logged out ...");
-                Method.getTxt().append("\nTotal left users : " + Method.getUserNum());
-                activeUsers.removeAllItems();
-                for (String value : Method.getUserList())
-                {
-                    activeUsers.addItem(value);
-                }
+                activeUsers.removeItem(userName);
+                Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  User : " + userName + " has been logged out ...");
+                Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total left users : " + Method.getUserNum());
+
+//                activeUsers.removeAllItems();
+//                for (String value : Method.getUserList())
+//                {
+//                    activeUsers.addItem(value);
+//                }
                 for (Client s : Method.getClients())
                 {
                     Message ms = new Message();
@@ -153,7 +161,7 @@ public class Client extends Thread
             }
             catch (IOException e1)
             {
-                Method.getTxt().append("Error : " + e1);
+                Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Error : " + e1);
             }
         }
     }
