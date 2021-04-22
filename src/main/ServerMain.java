@@ -21,7 +21,8 @@ public class ServerMain extends javax.swing.JFrame
 {
 
     private static final long serialVersionUID = 1L;
-    private DateTimeFormatter forLog = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
     private ServerSocket ss;
     private Thread run;
     private boolean isAlreadyEntered;
@@ -402,10 +403,45 @@ public class ServerMain extends javax.swing.JFrame
 
                 // now = LocalDateTime.now();
                 //Updating status field for Active participants info
-                CurrStatus.append("[" + forLog.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
+                CurrStatus.append("[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
 
                 try
                 {
+                    File logDir = new File("logs");
+                    String logFileName = "Server-" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
+                    File logFile = new File(logDir + File.separator + logFileName);
+
+                    if (logDir.exists())
+                    {
+                        System.out.println("KAboom logging folder exists ");
+                        File temp[] = logDir.listFiles();
+                        if (temp.length > 0)
+                        {
+                            System.out.println("There are some files present in directory named LOG");
+                            if (logFile.exists())
+                            {
+                                System.out.println("THe custom named file exists");
+                            }
+                            else if (!logFile.exists())
+                            {
+                                logFile.createNewFile();
+                                System.out.println("Custom file is created succesfully in dir " + logDir);
+                            }
+                        }
+                        if (temp.length == 0)
+                        {
+                            System.out.println("The logs folder is empty");
+                            logFile.createNewFile();
+                            System.out.println("Custom file is created succesfully in dir " + logDir);
+                        }
+                    }
+                    if (!logDir.exists())
+                    {
+                        logDir.mkdir();
+                        System.out.println("Thats it the folder is created succefully sir !");
+                        logFile.createNewFile();
+                        System.out.println("The file is newly created under Directory " + logDir);
+                    }
                     //calling the execute method for thread creation
                     execute();
                 }
@@ -413,7 +449,6 @@ public class ServerMain extends javax.swing.JFrame
                 {
                     Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
     }//GEN-LAST:event_serverStartBtnActionPerformed
@@ -498,7 +533,7 @@ public class ServerMain extends javax.swing.JFrame
             serverStatus.setForeground(Color.red);
             serverStatus.setText("Offline");
             serverStopBtn.setEnabled(false);
-            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Server Stopped Succesfully !\n");
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
             CurrStatus.append("------------------------------------------------"
                     + "-----------------------------------------------------------\n");
 
@@ -561,12 +596,12 @@ public class ServerMain extends javax.swing.JFrame
          * properly used, as all the data from each other will reside here only !!
          */
         File dir = new File("data");//Initialize object to make a new folder named as argument
-        CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Checking the required directory exists ??...");
+        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking the required directory exists ??...");
 
         if (dir.exists())
         {
-            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory already exists ..!");
-            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Checking is the Directory empty ..? ");
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory already exists ..!");
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking is the Directory empty ..? ");
             /**
              * This above method deletes the old files in the directory named Data(if exists) in
              * the Project's root path or AT the base directory of Main Executable file in a
@@ -576,27 +611,27 @@ public class ServerMain extends javax.swing.JFrame
             File f[] = dir.listFiles();
             if (f.length == 0)
             {
-                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory was already clean ...!");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory was already clean ...!");
             }
             else if (f.length > 0)
             {
-                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Detected " + f.length + " files in directory named data/");
-                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Deleting " + f.length + " files.... in " + dir.getPath() + " directory");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Detected " + f.length + " files in directory named data/");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deleting " + f.length + " files.... in " + dir.getPath() + " directory");
                 for (File fs : dir.listFiles())
                 {
                     fs.delete();
                 }
-                CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Deletion Successfull");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deletion Successfull");
             }
         }
         if (!dir.exists())
         {
-            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory not Exists ...!!");
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory not Exists ...!!");
 
             dir.mkdir();//Execute the above object
             //Failure of creation of above folder in the root path can cause
             //null pointer exception -------!!!
-            CurrStatus.append("\n["+forLog.format(LocalDateTime.now())+"]  Directory named " + dir.getPath() + " Created Succesfully");
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dir.getPath() + " Created Succesfully");
         }
         /**
          * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
