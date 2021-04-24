@@ -576,7 +576,7 @@ public class ServerMain extends javax.swing.JFrame
             try
             {
                 logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
-                logFileWriter.write(CurrStatus.getText() + "\nFile Last Opened/Modified : "
+                logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
                         + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
                         + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
                         + "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
