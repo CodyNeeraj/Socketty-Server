@@ -4,7 +4,9 @@ import function.Client;
 import function.IpFetcher;
 import function.Method;
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
@@ -23,12 +25,18 @@ public class ServerMain extends javax.swing.JFrame
     private static final long serialVersionUID = 1L;
     private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
     private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
+    private File logDir = new File("logs");
+    private File dataDir = new File("data");
+    private String logFileName = "Server-" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
+    private File logFile = new File(logDir + File.separator + logFileName);
+    // FileUtils.writeStringToFile(file, "String to append", true);
+    private BufferedWriter logFileWriter;
     private ServerSocket ss;
     private Thread run;
     private boolean isAlreadyEntered;
     private int port = 0;
 
-    public ServerMain ()
+    public ServerMain()
     {
         try
         {
@@ -36,7 +44,7 @@ public class ServerMain extends javax.swing.JFrame
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             //will set the default installed l&F as windows Native
         }
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+        catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
         {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -80,9 +88,16 @@ public class ServerMain extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Admin Central by Neeraj");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            public void windowClosing(java.awt.event.WindowEvent evt)
+            {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Select IP");
@@ -349,9 +364,9 @@ public class ServerMain extends javax.swing.JFrame
             ss = new ServerSocket(port);
             //ServerSocket ss = new ServerSocket(port);
         }
-        catch (NumberFormatException e)
+        catch(NumberFormatException e)
         {
-            if (portField.getText().isEmpty())
+            if(portField.getText().isEmpty())
             {
                 JOptionPane.showMessageDialog(this, "Port cannot be left Empty", "Port Error", JOptionPane.WARNING_MESSAGE);
             }
@@ -360,34 +375,34 @@ public class ServerMain extends javax.swing.JFrame
                 JOptionPane.showMessageDialog(this, "Port can only be a Number", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        catch (BindException b) //for serversocket object
+        catch(BindException b) //for serversocket object
         {
             isBindException = true; //setted flag to true (only if ocurred)
             JOptionPane.showMessageDialog(this, "Port Already being used by some other application", "Port Already Occupied", JOptionPane.WARNING_MESSAGE);
         }
-        catch (IOException e)
+        catch(IOException e)
         {
             isIOException = true;
             JOptionPane.showMessageDialog(this, "Exception ocurred in I/O of the program\nwhile making connection request", "I/O Error", JOptionPane.WARNING_MESSAGE);
             System.out.println("IOException ocurred");
         }
-        catch (IllegalArgumentException e)
+        catch(IllegalArgumentException e)
         {
             isIllegalArgument = true;
             //JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
         }
 
-        if (port < 10)
+        if(port < 10)
         {
             JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
         }
         else
         {
-            if (isBindException | isIOException | isIllegalArgument)
-            {
-                //DO nothing LOL, just for keeping the fact of executing nothing until user's input
-            }
-            if (!isBindException && !isIOException && !isIllegalArgument)
+//            if(isBindException | isIOException | isIllegalArgument)
+//            {
+//                //DO nothing LOL, just for keeping the fact of executing nothing until user's input
+//            }
+            if(!isBindException && !isIOException && !isIllegalArgument)
             {
                 //enabling btn for use now
                 refreshBtn.setEnabled(true);
@@ -403,49 +418,14 @@ public class ServerMain extends javax.swing.JFrame
 
                 // now = LocalDateTime.now();
                 //Updating status field for Active participants info
-                CurrStatus.append("[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
 
                 try
                 {
-                    File logDir = new File("logs");
-                    String logFileName = "Server-" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
-                    File logFile = new File(logDir + File.separator + logFileName);
-
-                    if (logDir.exists())
-                    {
-                        System.out.println("KAboom logging folder exists ");
-                        File temp[] = logDir.listFiles();
-                        if (temp.length > 0)
-                        {
-                            System.out.println("There are some files present in directory named LOG");
-                            if (logFile.exists())
-                            {
-                                System.out.println("THe custom named file exists");
-                            }
-                            else if (!logFile.exists())
-                            {
-                                logFile.createNewFile();
-                                System.out.println("Custom file is created succesfully in dir " + logDir);
-                            }
-                        }
-                        if (temp.length == 0)
-                        {
-                            System.out.println("The logs folder is empty");
-                            logFile.createNewFile();
-                            System.out.println("Custom file is created succesfully in dir " + logDir);
-                        }
-                    }
-                    if (!logDir.exists())
-                    {
-                        logDir.mkdir();
-                        System.out.println("Thats it the folder is created succefully sir !");
-                        logFile.createNewFile();
-                        System.out.println("The file is newly created under Directory " + logDir);
-                    }
                     //calling the execute method for thread creation
                     execute();
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -455,7 +435,7 @@ public class ServerMain extends javax.swing.JFrame
 
     private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
     {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
-        if (isAlreadyEntered == false)
+        if(isAlreadyEntered == false)
         {
             isAlreadyEntered = Boolean.TRUE;
             /**
@@ -471,7 +451,7 @@ public class ServerMain extends javax.swing.JFrame
             obj.setPriority(1);
             obj.start();
             String ip = obj.pub_Ip();
-            if (ip.equalsIgnoreCase("Offline"))
+            if(ip.equalsIgnoreCase("Offline"))
             {
                 public_Ip_Port.setText("Offline");
             }
@@ -481,7 +461,7 @@ public class ServerMain extends javax.swing.JFrame
             }
         }
 
-        if (isAlreadyEntered == true)
+        if(isAlreadyEntered == true)
         {
             //do nothing if mouse entered next time again from now on
             //(solved the problem of UI hanging if hovered again and again)
@@ -494,7 +474,7 @@ public class ServerMain extends javax.swing.JFrame
         IpFetcher obj = new IpFetcher();
         obj.start();
         String ip = obj.pub_Ip();
-        if (ip.equalsIgnoreCase("Offline"))
+        if(ip.equalsIgnoreCase("Offline"))
         {
             public_Ip_Port.setText("Offline");
         }
@@ -520,35 +500,104 @@ public class ServerMain extends javax.swing.JFrame
 //        {
 //            public_Ip_Port.setText(ip);
 //        }
+        dirVerifier();
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
     private void serverStopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStopBtnActionPerformed
     {//GEN-HEADEREND:event_serverStopBtnActionPerformed
-        try
-        {
-            run.interrupt();
-            ss.close();
-            portField.setEnabled(true);
-            serverStartBtn.setEnabled(true);
-            serverStatus.setForeground(Color.red);
-            serverStatus.setText("Offline");
-            serverStopBtn.setEnabled(false);
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
-            CurrStatus.append("------------------------------------------------"
-                    + "-----------------------------------------------------------\n");
 
-        }
-        catch (Exception ex)
+        Object choice[] =
         {
-            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-            serverStopBtn.setEnabled(true);
+            "Yes", "No"
+        };
+        // Object defaultchoice = choice[0];
+        //can also be specified as an Object
+        int selectedValue = JOptionPane.showOptionDialog(
+                rootPane,
+                "Stopping can cause any client[s] connected\n"
+                + "to this server to halt the connection and\n"
+                + "disconnect ...!",
+                "Confirm Stop Server",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choice,
+                choice[0]
+        );
+
+        if(selectedValue == JOptionPane.YES_OPTION)
+        {
+            try
+            {
+                run.interrupt();
+                ss.close();
+                portField.setEnabled(true);
+                serverStartBtn.setEnabled(true);
+                serverStatus.setForeground(Color.red);
+                serverStatus.setText("Offline");
+                serverStopBtn.setEnabled(false);
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
+                CurrStatus.append("------------------------------------------------"
+                        + "-----------------------------------------------------------");
+            }
+            catch(Exception ex)
+            {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                serverStopBtn.setEnabled(true);
+            }
         }
+        else if(selectedValue == JOptionPane.NO_OPTION)
+        {
+        }
+
     }//GEN-LAST:event_serverStopBtnActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+    {//GEN-HEADEREND:event_formWindowClosing
+        Object choice[] =
+        {
+            "Yes", "No"
+        };
+        // Object defaultchoice = choice[0];
+        //can also be specified as an Object
+        int selectedValue = JOptionPane.showOptionDialog(
+                rootPane,
+                "Exiting will close this sever's session ?",
+                "Confirm",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choice,
+                choice[0]
+        );
+
+        if(selectedValue == JOptionPane.YES_OPTION)
+        {
+            try
+            {
+                logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+                logFileWriter.write(CurrStatus.getText() + "\nFile Last Opened/Modified : "
+                        + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
+                        + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
+                        + "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                        + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+                logFileWriter.close();
+            }
+            catch(IOException ex)
+            {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.exit(0);
+        }
+        else if(selectedValue == JOptionPane.NO_OPTION)
+        {
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
      */
-    public static void main (String args[])
+    public static void main(String args[])
     {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
@@ -586,55 +635,104 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JButton serverStopBtn;
     // End of variables declaration//GEN-END:variables
 
-    private void execute () throws Exception
+    private void dirVerifier()
+    {
+        String default_header = "text will be wriiten here" + "\n";
+        try
+        {
+            CurrStatus.append("[" + forStamping.format(LocalDateTime.now()) + "]  Checking the required directories exists ??...");
+            if(logDir.exists())
+            {
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR Logs/ Exists !");
+                File temp[] = logDir.listFiles();
+                if(temp.length > 0)
+                {
+                    if(logFile.exists())
+                    {
+                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file exists ...!");
+                    }
+                    //can execute if todays file isn't present among others
+                    else if(!logFile.exists())
+                    {
+                        logFile.createNewFile();
+                        logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+                        logFileWriter.write(default_header);
+                        logFileWriter.close();
+                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+                    }
+                }
+                if(temp.length == 0)
+                {
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  No special named file[s] found in DIR /logs");
+                    logFile.createNewFile();
+                    logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+                    logFileWriter.write(default_header);
+                    logFileWriter.close();
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+                }
+            }
+            if(!logDir.exists())
+            {
+                logDir.mkdir();
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR logs/ created Successfuly");
+                logFile.createNewFile();
+                logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+                logFileWriter.write(default_header);
+                logFileWriter.close();
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+            }
+            /**
+             * Code for making new folder named data (will cause the client to freeze if not
+             * properly used, as all the data from each other will reside here only !!
+             */
+            if(dataDir.exists())
+            {
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ already exists ..!");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking is the DIR data/ empty ..? ");
+                /**
+                 * This above method deletes the old files in the directory named Data(if exists) in
+                 * the Project's root path or AT the base directory of Main Executable file in a
+                 * directory named data, and then replaces it with the new Current session's file
+                 * for keeping a list of data in session for Assessment purposes
+                 */
+                File f[] = dataDir.listFiles();
+                if(f.length == 0)
+                {
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ was already clean ...!");
+                }
+                else if(f.length > 0)
+                {
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Detected " + f.length + " files in DIR data/");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deleting " + f.length + " files.... in DIR data/");
+                    for(File fs : dataDir.listFiles())
+                    {
+                        fs.delete();
+                    }
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deletion Successfull");
+                }
+            }
+            if(!dataDir.exists())
+            {
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ not Exists ...!!");
+
+                dataDir.mkdir();//Execute the above object
+                //Failure of creation of above folder in the root path can cause
+                //null pointer exception -------!!!
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dataDir.getPath() + " Created Succesfully");
+            }
+        }
+        catch(IOException ex)
+        {
+            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void execute() throws Exception
     {
         //Calling start Method
         Method.setClients(new ArrayList<>());
-
         /**
-         * Code for making new folder named data (will cause the client to freeze if not
-         * properly used, as all the data from each other will reside here only !!
-         */
-        File dir = new File("data");//Initialize object to make a new folder named as argument
-        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking the required directory exists ??...");
-
-        if (dir.exists())
-        {
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory already exists ..!");
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking is the Directory empty ..? ");
-            /**
-             * This above method deletes the old files in the directory named Data(if exists) in
-             * the Project's root path or AT the base directory of Main Executable file in a
-             * directory named data, and then replaces it with the new Current session's file
-             * for keeping a list of data in session for Assessment purposes
-             */
-            File f[] = dir.listFiles();
-            if (f.length == 0)
-            {
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory was already clean ...!");
-            }
-            else if (f.length > 0)
-            {
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Detected " + f.length + " files in directory named data/");
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deleting " + f.length + " files.... in " + dir.getPath() + " directory");
-                for (File fs : dir.listFiles())
-                {
-                    fs.delete();
-                }
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deletion Successfull");
-            }
-        }
-        if (!dir.exists())
-        {
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory not Exists ...!!");
-
-            dir.mkdir();//Execute the above object
-            //Failure of creation of above folder in the root path can cause
-            //null pointer exception -------!!!
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dir.getPath() + " Created Succesfully");
-        }
-        /**
-         * Will Update THe fields and initialize a new Thread (Runnable) for each incoming CLient
+         * Will Update The fields and initialize a new Thread (Runnable) for each incoming CLient
          * request by passing it to the this-->Method-->Message-->Client Class.
          * for above details see the Project's Hierarchy.
          */
@@ -643,13 +741,13 @@ public class ServerMain extends javax.swing.JFrame
             try
             {
                 Method.setTxt(CurrStatus);
-                while (true)
+                while(true)
                 {
                     new Client(ss.accept());
                 }
 
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 JOptionPane.showMessageDialog(
                         ServerMain.this,

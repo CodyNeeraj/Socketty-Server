@@ -15,7 +15,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -55,7 +54,7 @@ public class serverChatConsole extends javax.swing.JFrame
      * @param port
      * @throws java.io.IOException
      */
-    public serverChatConsole (ServerSocket ss, int port) throws IOException
+    public serverChatConsole(ServerSocket ss, int port) throws IOException
     {
         this.ss = ss;
         this.port = port;
@@ -104,7 +103,7 @@ public class serverChatConsole extends javax.swing.JFrame
 //    }
     }
 
-    private void whileChatting ()
+    private void whileChatting()
     {
         String message = "";
         do
@@ -114,7 +113,7 @@ public class serverChatConsole extends javax.swing.JFrame
                 message = dis.readUTF();
                 decodedMsgPane.append("\n" + message);
             }
-            catch (IOException ex)
+            catch(IOException ex)
             {
                 Object option[] =
                 {
@@ -133,33 +132,33 @@ public class serverChatConsole extends javax.swing.JFrame
 
                 try
                 {
-                    if (choice == JOptionPane.YES_OPTION)
+                    if(choice == JOptionPane.YES_OPTION)
                     {
                         soc.close();
                     }
-                    if (choice == JOptionPane.NO_OPTION)
+                    if(choice == JOptionPane.NO_OPTION)
                     {
                         System.exit(0);
                     }
 
                 }
-                catch (IOException ex1)
+                catch(IOException ex1)
                 {
                     Logger.getLogger(serverChatConsole.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
         }
-        while (!message.equals("/quit"));
+        while(!message.equals("/quit"));
     }
 
-    public void sendMessage (String text)
+    public void sendMessage(String text)
     {
         try
         {
             dos.writeUTF(text);
             // dos.flush();
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             System.out.println("No client conncted");
         }
@@ -652,7 +651,7 @@ public class serverChatConsole extends javax.swing.JFrame
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Others", "txt", "rdp", "html", "bin", "htm", "xml"));
 
         int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION)
+        if(result == JFileChooser.APPROVE_OPTION)
         {
             slctFilePathBtn.setText("Reselect");
             selectedFile = fileChooser.getSelectedFile();
@@ -663,7 +662,7 @@ public class serverChatConsole extends javax.swing.JFrame
             //setting the path to the selected file to the String
             selectedFilePath = selectedFile.getAbsoluteFile().toString();
         }
-        if (result == JFileChooser.CANCEL_OPTION)
+        if(result == JFileChooser.CANCEL_OPTION)
         {
             //setting the path of the selected file to the text field
             filePathField.setText("No File Selected");
@@ -695,7 +694,7 @@ public class serverChatConsole extends javax.swing.JFrame
         obj.start();
         String ip = obj.pub_Ip();
 
-        if (ip.equalsIgnoreCase("Offline"))
+        if(ip.equalsIgnoreCase("Offline"))
         {
             public_Ip_Port.setText("Offline");
         }
@@ -707,7 +706,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
     {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
-        if (isAlreadyEntered == false)
+        if(isAlreadyEntered == false)
         {
             isAlreadyEntered = Boolean.TRUE;
             /**
@@ -723,7 +722,7 @@ public class serverChatConsole extends javax.swing.JFrame
             obj.setPriority(1);
             obj.start();
             String ip = obj.pub_Ip();
-            if (ip.equalsIgnoreCase("Offline"))
+            if(ip.equalsIgnoreCase("Offline"))
             {
                 public_Ip_Port.setText("Offline");
             }
@@ -733,7 +732,7 @@ public class serverChatConsole extends javax.swing.JFrame
             }
         }
 
-        if (isAlreadyEntered == true)
+        if(isAlreadyEntered == true)
         {
             //do nothing if mouse entered next time again from now on 
             //(solved the problem of UI hanging if hovered again and again)
@@ -758,7 +757,7 @@ public class serverChatConsole extends javax.swing.JFrame
         builder = new StringBuilder();
         end = System.currentTimeMillis();
         long elapsedtime = (end - start) / 1000;
-        if (elapsedtime > 59)
+        if(elapsedtime > 59)
         {
             double time = elapsedtime / 60f;
             double temp = (Math.floor(time * 100) / 100);
@@ -792,7 +791,7 @@ public class serverChatConsole extends javax.swing.JFrame
     private void sendFileBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sendFileBtnActionPerformed
     {//GEN-HEADEREND:event_sendFileBtnActionPerformed
         //handling  of NullPointerException
-        if (selectedFilePath == null)
+        if(selectedFilePath == null)
         {
             JOptionPane.showMessageDialog(rootPane, "No any file selected !", "File Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -814,11 +813,11 @@ public class serverChatConsole extends javax.swing.JFrame
                     Choice, Choice[0]
             );
 
-            if (choice == JOptionPane.YES_OPTION)
+            if(choice == JOptionPane.YES_OPTION)
             {
                 System.out.println("sent : " + selectedFilePath + " Succesfully");
             }
-            else if (choice == JOptionPane.NO_OPTION)
+            else if(choice == JOptionPane.NO_OPTION)
             {
                 System.out.println("Cool down nothing happened");
             }
@@ -840,7 +839,7 @@ public class serverChatConsole extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main (String args[])
+    public static void main(String args[])
     {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
@@ -850,7 +849,7 @@ public class serverChatConsole extends javax.swing.JFrame
             {
                 soc = ss.accept();
                 int i;
-                for (i = 0; i < MAXConnections; i++)
+                for(i = 0; i < MAXConnections; i++)
                 {
 //                    if (threads[i] == null)
 //                    {
@@ -858,7 +857,7 @@ public class serverChatConsole extends javax.swing.JFrame
 //                        break;
 //                    }
                 }
-                if (i == MAXConnections)
+                if(i == MAXConnections)
                 {
                     PrintStream os = new PrintStream(soc.getOutputStream());
                     os.println("Server too busy. Try later.");
@@ -866,7 +865,7 @@ public class serverChatConsole extends javax.swing.JFrame
                     soc.close();
                 }
             }
-            catch (IOException e)
+            catch(IOException e)
             {
                 System.out.println(e);
             }

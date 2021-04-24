@@ -17,20 +17,20 @@ public class IpFetcher extends Thread
     private InetAddress localhost;
     private String public_ip;
 
-    public String loc_Ip ()
+    public String loc_Ip()
     {
         try
         {
             localhost = InetAddress.getLocalHost();
         }
-        catch (UnknownHostException ex)
+        catch(UnknownHostException ex)
         {
             return "Error";
         }
         return localhost.getHostAddress();
     }
 
-    public String pub_Ip ()
+    public String pub_Ip()
     {
         try
         {
@@ -40,7 +40,7 @@ public class IpFetcher extends Thread
             BufferedReader url = new BufferedReader(new InputStreamReader(url_name.openStream()));
             public_ip = url.readLine();
         }
-        catch (IOException e)
+        catch(IOException e)
         {
             return "Offline";
         }
@@ -48,7 +48,7 @@ public class IpFetcher extends Thread
     }
 
     @Override
-    public void run ()
+    public void run()
     {
         pub_Ip();
     }

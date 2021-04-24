@@ -28,19 +28,19 @@ public class Client extends Thread
     private String time;
     private final DateTimeFormatter forLog = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public Client (Socket socket)
+    public Client(Socket socket)
     {
         this.socket = socket;
         execute();
     }
 
-    private void execute ()
+    private void execute()
     {
         this.start();
     }
 
     @Override
-    public void run ()
+    public void run()
     {
         try
         {
@@ -48,16 +48,16 @@ public class Client extends Thread
             out = new ObjectOutputStream(socket.getOutputStream());
             ID = Method.addClient(this);
             //  loop starting get message from client
-            while (true)
+            while(true)
             {
                 Message ms = (Message) in.readObject();
                 String status = ms.getStatus();
-                if (status.equals("New"))
+                if(status.equals("New"))
                 {
                     userName = ms.getName().split("!")[0];
                     time = ms.getName().split("!")[1];
                     profile = ms.getImage();
-                    Method.setUserList(userName);
+                    Method.modifyUserList(userName);
                     Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  New User : " + userName + " has connected ...");
                     Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total connected users until now: " + Method.getUserNum());
                     //for displaying number of users connected by fetching details from Arraylist in Method class
@@ -70,7 +70,7 @@ public class Client extends Thread
                     activeUsers.addItem(userName);
 
                     //  list all friend send to new client login
-                    for (Client client : Method.getClients())
+                    for(Client client : Method.getClients())
                     {
                         ms = new Message();
                         ms.setStatus("New");
@@ -81,9 +81,9 @@ public class Client extends Thread
                         out.flush();
                     }
                     //  send new client to old client
-                    for (Client client : Method.getClients())
+                    for(Client client : Method.getClients())
                     {
-                        if (client != this)
+                        if(client != this)
                         {
                             ms = new Message();
                             ms.setStatus("New");
@@ -95,7 +95,7 @@ public class Client extends Thread
                         }
                     }
                 }
-                else if (status.equals("File"))
+                else if(status.equals("File"))
                 {
                     int fileID = Method.getFileID();
                     //file number, by default the file id variable in method class is kept static
@@ -103,7 +103,7 @@ public class Client extends Thread
                     SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyyhhmmssaa");
                     String fileName = fileID + "!" + df.format(new Date()) + "!" + ms.getName().split("!")[0];
                     Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + fileName);
-                    try (FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
+                    try(FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
                     {
                         output.write(ms.getData());
                     }
@@ -113,19 +113,19 @@ public class Client extends Thread
                     ms.setName(fileID + "!" + fileN);
                     ms.setImage((ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(new File("data/" + fileName)));
                     ms.setID(ID);
-                    for (Client client : Method.getClients())
+                    for(Client client : Method.getClients())
                     {
                         client.getOut().writeObject(ms);
                         client.getOut().flush();
                     }
                 }
-                else if (status.equals("download"))
+                else if(status.equals("download"))
                 {
                     sendFile(ms);
                 }
                 else
                 {
-                    for (Client client : Method.getClients())
+                    for(Client client : Method.getClients())
                     {
                         client.getOut().writeObject(ms);
                         client.getOut().flush();
@@ -134,7 +134,7 @@ public class Client extends Thread
             }
 
         }
-        catch (IOException | ClassNotFoundException e)
+        catch(IOException | ClassNotFoundException e)
         {
             try
             {
@@ -149,7 +149,7 @@ public class Client extends Thread
 //                {
 //                    activeUsers.addItem(value);
 //                }
-                for (Client s : Method.getClients())
+                for(Client s : Method.getClients())
                 {
                     Message ms = new Message();
                     ms.setStatus("Error");
@@ -159,22 +159,22 @@ public class Client extends Thread
                     s.getOut().flush();
                 }
             }
-            catch (IOException e1)
+            catch(IOException e1)
             {
                 Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Error : " + e1);
             }
         }
     }
 
-    private void sendFile (Message ms)
+    private void sendFile(Message ms)
     {
         new Thread(() ->
         {
             String fID = ms.getMessage();
             File file = new File("data");
-            for (File f : file.listFiles())
+            for(File f : file.listFiles())
             {
-                if (f.getName().startsWith(fID))
+                if(f.getName().startsWith(fID))
                 {
                     try
                     {
@@ -188,7 +188,7 @@ public class Client extends Thread
                         out.flush();
                         break;
                     }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
                         //  send to client error
 
@@ -198,72 +198,72 @@ public class Client extends Thread
         }).start();
     }
 
-    public Socket getSocket ()
+    public Socket getSocket()
     {
         return socket;
     }
 
-    public void setSocket (Socket socket)
+    public void setSocket(Socket socket)
     {
         this.socket = socket;
     }
 
-    public String getUserName ()
+    public String getUserName()
     {
         return userName;
     }
 
-    public void setUserName (String userName)
+    public void setUserName(String userName)
     {
         this.userName = userName;
     }
 
-    public ObjectInputStream getIn ()
+    public ObjectInputStream getIn()
     {
         return in;
     }
 
-    public void setIn (ObjectInputStream in)
+    public void setIn(ObjectInputStream in)
     {
         this.in = in;
     }
 
-    public ObjectOutputStream getOut ()
+    public ObjectOutputStream getOut()
     {
         return out;
     }
 
-    public void setOut (ObjectOutputStream out)
+    public void setOut(ObjectOutputStream out)
     {
         this.out = out;
     }
 
-    public String getTime ()
+    public String getTime()
     {
         return time;
     }
 
-    public void setTime (String time)
+    public void setTime(String time)
     {
         this.time = time;
     }
 
-    public ImageIcon getProfile ()
+    public ImageIcon getProfile()
     {
         return profile;
     }
 
-    public void setProfile (ImageIcon profile)
+    public void setProfile(ImageIcon profile)
     {
         this.profile = profile;
     }
 
-    public int getID ()
+    public int getID()
     {
         return ID;
     }
 
-    public void setID (int ID)
+    public void setID(int ID)
     {
         this.ID = ID;
     }
