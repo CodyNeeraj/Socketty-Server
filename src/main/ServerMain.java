@@ -13,6 +13,8 @@ import java.net.ServerSocket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -49,6 +51,17 @@ public class ServerMain extends javax.swing.JFrame
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         initComponents();
+        date_now.setText(DateTimeFormatter.ofPattern("dd-mm-yyyy").format(LocalDateTime.now()));
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                time_now.setText(DateTimeFormatter.ofPattern("hh:mm:ss a").format(LocalDateTime.now()));
+            }
+        };
+        timer.scheduleAtFixedRate(task, 1000, 1000);
     }
 
     /**
@@ -84,6 +97,9 @@ public class ServerMain extends javax.swing.JFrame
         serverStopBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         CurrStatus = new javax.swing.JTextArea();
+        date_now = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        time_now = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -220,6 +236,16 @@ public class ServerMain extends javax.swing.JFrame
         CurrStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(CurrStatus);
 
+        date_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        date_now.setForeground(new java.awt.Color(0, 0, 255));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 0, 255));
+        jLabel8.setText("Date-Time ::");
+
+        time_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        time_now.setForeground(new java.awt.Color(0, 0, 255));
+
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
 
@@ -286,6 +312,14 @@ public class ServerMain extends javax.swing.JFrame
                 .addContainerGap()
                 .add(jScrollPane1)
                 .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jLabel8)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(date_now, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(time_now, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -311,7 +345,7 @@ public class ServerMain extends javax.swing.JFrame
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(jLabel12)
                                     .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -347,7 +381,12 @@ public class ServerMain extends javax.swing.JFrame
                     .add(serverStopBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 279, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(date_now)
+                    .add(jLabel8)
+                    .add(time_now))
+                .add(9, 9, 9))
         );
 
         pack();
@@ -537,8 +576,7 @@ public class ServerMain extends javax.swing.JFrame
                 serverStatus.setText("Offline");
                 serverStopBtn.setEnabled(false);
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
-                CurrStatus.append("------------------------------------------------"
-                        + "-----------------------------------------------------------");
+                CurrStatus.append("-----------------------------------------------------------------------------------------------------------");
             }
             catch(Exception ex)
             {
@@ -579,8 +617,7 @@ public class ServerMain extends javax.swing.JFrame
                 logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
                         + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
                         + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
-                        + "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-                        + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+                        + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PROGRAM-CLOSED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
                 logFileWriter.close();
             }
             catch(IOException ex)
@@ -609,6 +646,7 @@ public class ServerMain extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
     public static javax.swing.JComboBox<String> activeUsers;
+    private javax.swing.JLabel date_now;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -617,6 +655,7 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -633,11 +672,25 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JButton serverStartBtn;
     private javax.swing.JLabel serverStatus;
     private javax.swing.JButton serverStopBtn;
+    private javax.swing.JLabel time_now;
     // End of variables declaration//GEN-END:variables
 
     private void dirVerifier()
     {
-        String default_header = "text will be wriiten here" + "\n";
+        String default_header = "\t\t\t\t\t\t\t\t\t\t***DO NOT EDIT OR MODIFY THIS FILE OF YOUR OWN***\n\n"
+                + "This file is auto generated by default through CoreServer"
+                + " Application (Author: Neeraj, License MIT's License)\n" + "File created on: ["
+                + DateTimeFormatter.ofPattern("hh:mm:ss a dd-MMMM-yyyy").format(LocalDateTime.now())
+                + "]\nSince all the data here included in this file will get generated by default EVERYTIME we open "
+                + "and close the Application (for logging purposes),Two types of record formatters are used here as >> and -- N.B\n\n"
+                + "1. Firstly  >> means the complete session of the program i.e ONE Main execution and then closing the program...\n"
+                + "2. Secondly -- means of one server deployment and then disengagement, as many consecutive deplys and disengmnts"
+                + " can be done one after the other, this file gets auto incremented/appends the records each and everytime any activity is"
+                + "done on the server which is getting logged into Console and then dumping it into this log file for "
+                + "later Activity Assesment purposes ,You're requested to keep your time in sync as this software uses and logs "
+                + "the same using underlying machine's time, if there is any discrepency in the system's time the loging will get "
+                + "cluttered, for more info visit the developer's site to resolve this problem !!\n\n"
+                + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>EXECUTION-STARTS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n";
         try
         {
             CurrStatus.append("[" + forStamping.format(LocalDateTime.now()) + "]  Checking the required directories exists ??...");
@@ -749,10 +802,10 @@ public class ServerMain extends javax.swing.JFrame
             }
             catch(Exception e)
             {
-                JOptionPane.showMessageDialog(
-                        ServerMain.this,
-                        "Server Closed forcefully in during mid scanning\nof incoming client requests !!",
-                        "Error", JOptionPane.WARNING_MESSAGE);
+//                JOptionPane.showMessageDialog(
+//                        ServerMain.this,
+//                        "Server Closed forcefully in during mid scanning\nof incoming client requests !!",
+//                        "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
 
