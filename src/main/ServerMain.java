@@ -136,7 +136,6 @@ public class ServerMain extends javax.swing.JFrame
         jTextField1.setText("Localhost (127.0.0.1)");
         jTextField1.setToolTipText("Default");
 
-        portField.setText("5000");
         portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
@@ -345,11 +344,11 @@ public class ServerMain extends javax.swing.JFrame
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(jLabel12)
                                     .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(0, 0, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)))
+                        .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(layout.createSequentialGroup()
@@ -401,7 +400,6 @@ public class ServerMain extends javax.swing.JFrame
         {
             port = Integer.parseInt(portField.getText());
             ss = new ServerSocket(port);
-            //ServerSocket ss = new ServerSocket(port);
         }
         catch(NumberFormatException e)
         {
@@ -437,10 +435,10 @@ public class ServerMain extends javax.swing.JFrame
         }
         else
         {
-//            if(isBindException | isIOException | isIllegalArgument)
-//            {
-//                //DO nothing LOL, just for keeping the fact of executing nothing until user's input
-//            }
+            if(isBindException | isIOException | isIllegalArgument)
+            {
+                //DO nothing LOL, just for keeping the fact of executing nothing until user's input
+            }
             if(!isBindException && !isIOException && !isIllegalArgument)
             {
                 //enabling btn for use now
@@ -451,14 +449,12 @@ public class ServerMain extends javax.swing.JFrame
                 serverStatus.setForeground(new Color(9, 110, 35));
                 serverStatus.setText("Server is Running...");
 
-                //updating fields for useful information
-                loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
-                public_Ip_Port.setText(new IpFetcher().pub_Ip());
-
+//                //updating fields for useful information
+//                loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+//                public_Ip_Port.setText(new IpFetcher().pub_Ip());
                 // now = LocalDateTime.now();
                 //Updating status field for Active participants info
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
-
                 try
                 {
                     //calling the execute method for thread creation
@@ -527,18 +523,18 @@ public class ServerMain extends javax.swing.JFrame
     private void loc_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_loc_Ip_PortAncestorAdded
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
         loc_Ip_Port.setText(new IpFetcher().loc_Ip());
-//        IpFetcher obj = new IpFetcher();
-//        obj.start();
-//        String ip = obj.pub_Ip();
-//        if (ip.equalsIgnoreCase("Offline"))
-//        {
-//            public_Ip_Port.setText("Offline");
-//        }
-//
-//        else
-//        {
-//            public_Ip_Port.setText(ip);
-//        }
+        IpFetcher obj = new IpFetcher();
+        obj.start();
+        String ip = obj.pub_Ip();
+        if(ip.equalsIgnoreCase("Offline"))
+        {
+            public_Ip_Port.setText("Offline");
+        }
+
+        else
+        {
+            public_Ip_Port.setText(ip);
+        }
         dirVerifier();
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
@@ -611,6 +607,10 @@ public class ServerMain extends javax.swing.JFrame
 
         if(selectedValue == JOptionPane.YES_OPTION)
         {
+            if(!ss.isClosed())//server is running still
+            {
+                serverStopBtn.doClick();
+            }
             try
             {
                 logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
@@ -624,11 +624,8 @@ public class ServerMain extends javax.swing.JFrame
             {
                 Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.exit(0);
         }
-        else if(selectedValue == JOptionPane.NO_OPTION)
-        {
-        }
+        System.exit(0);
     }//GEN-LAST:event_formWindowClosing
 
     /**
