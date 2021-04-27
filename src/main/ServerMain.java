@@ -150,6 +150,13 @@ public class ServerMain extends javax.swing.JFrame
         serverPass.setText("Password");
 
         activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
+        activeUsers.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                activeUsersActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -171,14 +178,14 @@ public class ServerMain extends javax.swing.JFrame
         loc_Ip_Port.setText("Loading...");
         loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
         {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
                 loc_Ip_PortAncestorAdded(evt);
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
             {
             }
         });
@@ -343,8 +350,7 @@ public class ServerMain extends javax.swing.JFrame
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(jLabel12)
-                                    .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                        .add(0, 0, Short.MAX_VALUE))
+                                    .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -394,8 +400,8 @@ public class ServerMain extends javax.swing.JFrame
 
     private void serverStartBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStartBtnActionPerformed
     {//GEN-HEADEREND:event_serverStartBtnActionPerformed
-        boolean isBindException, isIOException, isIllegalArgument;
-        isBindException = isIOException = isIllegalArgument = false;
+        boolean isBindException, isIOException, isIllegalArgument, isNullPointerException;
+        isBindException = isIOException = isIllegalArgument = isNullPointerException = false;
         try
         {
             port = Integer.parseInt(portField.getText());
@@ -427,6 +433,10 @@ public class ServerMain extends javax.swing.JFrame
         {
             isIllegalArgument = true;
             //JOptionPane.showMessageDialog(this, "Port isn't in the range specified", "Value Error", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(NullPointerException e)
+        {
+            isNullPointerException = true;
         }
 
         if(port < 10)
@@ -607,12 +617,15 @@ public class ServerMain extends javax.swing.JFrame
 
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            if(!ss.isClosed())//server is running still
-            {
-                serverStopBtn.doClick();
-            }
             try
             {
+                if(ss != null)//server was initialised somewhat before
+                {
+                    if(!ss.isClosed())//server is running still
+                    {
+                        serverStopBtn.doClick();//calling to stop the server
+                    }
+                }
                 logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
                 logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
                         + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
@@ -620,13 +633,22 @@ public class ServerMain extends javax.swing.JFrame
                         + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PROGRAM-CLOSED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
                 logFileWriter.close();
             }
-            catch(IOException ex)
+            catch(Exception ex)
             {
                 Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
             }
+            System.exit(0);
         }
-        System.exit(0);
+        if(selectedValue == JOptionPane.NO_OPTION)
+        {
+            System.out.println("Not exiting");
+        }
     }//GEN-LAST:event_formWindowClosing
+
+    private void activeUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_activeUsersActionPerformed
+    {//GEN-HEADEREND:event_activeUsersActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_activeUsersActionPerformed
 
     /**
      * @param args the command line arguments
@@ -642,7 +664,7 @@ public class ServerMain extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
-    public static javax.swing.JComboBox<String> activeUsers;
+    private javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel date_now;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -790,7 +812,7 @@ public class ServerMain extends javax.swing.JFrame
         {
             try
             {
-                Method.setTxt(CurrStatus);
+                Method.compntPasser(CurrStatus, activeUsers);
                 while(true)
                 {
                     new Client(ss.accept());

@@ -1,6 +1,7 @@
 package function;
 
 import java.util.ArrayList;
+import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
 public class Method
@@ -10,11 +11,22 @@ public class Method
     private static int fileID;
     private static ArrayList<Client> clients;
     private static JTextArea CurrStatus;
+    private static JComboBox<String> activeUsersBox;
     private static final ArrayList<String> usernames = new ArrayList<>();
 
     public static int getFileID()
     {
         return fileID;
+    }
+
+    public static void comboAdder(String name)
+    {
+        activeUsersBox.addItem(name);
+    }
+
+    public static void comboRemover(String name)
+    {
+        activeUsersBox.removeItem(name);
     }
 
     public static int getUserNum()
@@ -38,9 +50,9 @@ public class Method
 
     public static void userRemover(String uname)
     {
-        System.out.println("THe request came to reove user named: " + uname);
+        System.out.println("The request came to remove user named: " + uname);
         usernames.remove(uname);
-        System.out.println("Array after removing the above said user is " + usernames);
+        System.out.println("Left users are: " + usernames);
     }
 
     public static void setFileID(int aFileID)
@@ -53,9 +65,10 @@ public class Method
         return CurrStatus;
     }
 
-    public static void setTxt(JTextArea aTxt)
+    public static void compntPasser(JTextArea aTxt, JComboBox<String> box)
     {
         CurrStatus = aTxt;
+        activeUsersBox = box;
     }
 
     public static int getClientID()

@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
-import static main.ServerMain.activeUsers;
 import message.Message;
 
 public class Client extends Thread
@@ -58,8 +57,8 @@ public class Client extends Thread
                     time = ms.getName().split("!")[1];
                     profile = ms.getImage();
                     Method.modifyUserList(userName);
-                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  New User : " + userName + " has connected ...");
-                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total connected users until now: " + Method.getUserNum());
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  New User : [" + userName + "] has connected ...");
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total connections till now: " + Method.getUserNum());
                     //for displaying number of users connected by fetching details from Arraylist in Method class
 
 //                    activeUsers.removeAllItems();
@@ -67,7 +66,7 @@ public class Client extends Thread
 //                    {
 //                        activeUsers.addItem(value);
 //                    }
-                    activeUsers.addItem(userName);
+                    Method.comboAdder(userName);
 
                     //  list all friend send to new client login
                     for(Client client : Method.getClients())
@@ -100,13 +99,22 @@ public class Client extends Thread
                     int fileID = Method.getFileID();
                     //file number, by default the file id variable in method class is kept static
                     String fileN = ms.getName();
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyyhhmmssaa");
-                    String fileName = fileID + "!" + df.format(new Date()) + "!" + ms.getName().split("!")[0];
-                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + fileName);
-                    try(FileOutputStream output = new FileOutputStream(new File("data/" + fileName)))
+                    String fileName = null;
+                    try
                     {
-                        output.write(ms.getData());
+                        fileName = fileID + " [" + userName + "] "
+                                + DateTimeFormatter.ofPattern("HH-mm-ss a").format(LocalDateTime.now())
+                                + "!" + ms.getName().split("!")[0];
+                        try(FileOutputStream output = new FileOutputStream(new File("data" + File.separator + fileName)))
+                        {
+                            output.write(ms.getData());
+                        }
                     }
+                    catch(Exception ex)
+                    {
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + fileName);
                     Method.setFileID(fileID + 1);
                     ms = new Message();
                     ms.setStatus("File");
@@ -140,7 +148,7 @@ public class Client extends Thread
             {
                 Method.getClients().remove(this);
                 Method.userRemover(this.userName);
-                activeUsers.removeItem(userName);
+                Method.comboRemover(userName);
                 Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  User : " + userName + " has been logged out ...");
                 Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  Total left users : " + Method.getUserNum());
 
@@ -191,7 +199,6 @@ public class Client extends Thread
                     catch(Exception e)
                     {
                         //  send to client error
-
                     }
                 }
             }
