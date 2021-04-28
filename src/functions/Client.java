@@ -1,4 +1,4 @@
-package function;
+package functions;
 
 import java.io.File;
 import java.io.FileInputStream;

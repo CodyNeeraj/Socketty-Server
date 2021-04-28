@@ -1,8 +1,8 @@
 package main;
 
-import function.Client;
-import function.IpFetcher;
-import function.Method;
+import functions.Client;
+import functions.IpAPI;
+import functions.Method;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +20,35 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import menubar.about_form;
 
+/*
+ * The MIT License
+ *
+ * Copyright 2021 Neeraj.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/**
+ *
+ * @author Neeraj
+ */
 public class ServerMain extends javax.swing.JFrame
 {
 
@@ -103,7 +131,7 @@ public class ServerMain extends javax.swing.JFrame
         time_now = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        aboutMenu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Admin Central by Neeraj");
@@ -179,14 +207,14 @@ public class ServerMain extends javax.swing.JFrame
         loc_Ip_Port.setText("Loading...");
         loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
         {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
                 loc_Ip_PortAncestorAdded(evt);
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
             {
             }
         });
@@ -253,11 +281,20 @@ public class ServerMain extends javax.swing.JFrame
         time_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
         time_now.setForeground(new java.awt.Color(0, 0, 255));
 
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
+        jMenu1.setText("Options");
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        aboutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.SHIFT_MASK));
+        aboutMenu.setText("About");
+        aboutMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                aboutMenuActionPerformed(evt);
+            }
+        });
+        jMenu1.add(aboutMenu);
+
+        jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
 
@@ -461,8 +498,8 @@ public class ServerMain extends javax.swing.JFrame
                 serverStatus.setText("Server is Running...");
 
 //                //updating fields for useful information
-//                loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
-//                public_Ip_Port.setText(new IpFetcher().pub_Ip());
+//                loc_Ip_Port.setText(new IpAPI().loc_Ip() + " : " + port);
+//                public_Ip_Port.setText(new IpAPI().pub_Ip());
                 // now = LocalDateTime.now();
                 //Updating status field for Active participants info
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
@@ -493,7 +530,7 @@ public class ServerMain extends javax.swing.JFrame
              * that it should not get executed again and again causing
              * performance overhead and application lagging..
              */
-            IpFetcher obj = new IpFetcher();
+            IpAPI obj = new IpAPI();
             obj.setPriority(1);
             obj.start();
             String ip = obj.pub_Ip();
@@ -516,8 +553,8 @@ public class ServerMain extends javax.swing.JFrame
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
-        IpFetcher obj = new IpFetcher();
+        loc_Ip_Port.setText(new IpAPI().loc_Ip() + " : " + port);
+        IpAPI obj = new IpAPI();
         obj.start();
         String ip = obj.pub_Ip();
         if(ip.equalsIgnoreCase("Offline"))
@@ -533,8 +570,8 @@ public class ServerMain extends javax.swing.JFrame
 
     private void loc_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_loc_Ip_PortAncestorAdded
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip());
-        IpFetcher obj = new IpFetcher();
+        loc_Ip_Port.setText(new IpAPI().loc_Ip());
+        IpAPI obj = new IpAPI();
         obj.start();
         String ip = obj.pub_Ip();
         if(ip.equalsIgnoreCase("Offline"))
@@ -652,6 +689,11 @@ public class ServerMain extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_activeUsersActionPerformed
 
+    private void aboutMenuActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_aboutMenuActionPerformed
+    {//GEN-HEADEREND:event_aboutMenuActionPerformed
+        new about_form().setVisible(true);
+    }//GEN-LAST:event_aboutMenuActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -666,6 +708,7 @@ public class ServerMain extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
+    private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel date_now;
     private javax.swing.JLabel jLabel1;
@@ -678,7 +721,6 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

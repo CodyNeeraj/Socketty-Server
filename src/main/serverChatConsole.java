@@ -7,7 +7,7 @@ package main;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import function.IpFetcher;
+import functions.IpAPI;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -689,7 +689,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
-        IpFetcher obj = new IpFetcher();
+        IpAPI obj = new IpAPI();
         loc_Ip_Port.setText(obj.loc_Ip() + " : " + port);
         obj.start();
         String ip = obj.pub_Ip();
@@ -718,7 +718,7 @@ public class serverChatConsole extends javax.swing.JFrame
              * that it should not get executed again and again causing
              * performance overhead and application lagging..
              */
-            IpFetcher obj = new IpFetcher();
+            IpAPI obj = new IpAPI();
             obj.setPriority(1);
             obj.start();
             String ip = obj.pub_Ip();
@@ -741,7 +741,7 @@ public class serverChatConsole extends javax.swing.JFrame
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowGainedFocus
     {//GEN-HEADEREND:event_formWindowGainedFocus
-        loc_Ip_Port.setText(new IpFetcher().loc_Ip() + " : " + port);
+        loc_Ip_Port.setText(new IpAPI().loc_Ip() + " : " + port);
         pattern = DateTimeFormatter.ofPattern("dd-MMMM-yyyy hh:mm");
         now = LocalDateTime.now();
         dateAndTime.setText(pattern.format(now));

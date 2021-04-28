@@ -1,4 +1,4 @@
-package function;
+package functions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
  *
  * @author Neeraj
  */
-public class IpFetcher extends Thread
+public class IpAPI extends Thread
 {
 
     private InetAddress localhost;
