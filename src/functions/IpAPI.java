@@ -35,9 +35,9 @@ public class IpAPI extends Thread
         try
         {
             //External IP tools API to get Http response in the form of text
-            // URL url_name = new URL("https://api.my-ip.io/ip");
-            URL url_name = new URL("https://api.my-ip.io/ip");
-            BufferedReader url = new BufferedReader(new InputStreamReader(url_name.openStream()));
+            // URL publicIP = new URL("https://api.my-ip.io/ip");
+            URL publicIP = new URL("https://api.my-ip.io/ip");
+            BufferedReader url = new BufferedReader(new InputStreamReader(publicIP.openStream()));
             public_ip = url.readLine();
         }
         catch(IOException e)

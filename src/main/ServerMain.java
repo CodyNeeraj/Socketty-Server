@@ -79,7 +79,7 @@ public class ServerMain extends javax.swing.JFrame
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         initComponents();
-        date_now.setText(DateTimeFormatter.ofPattern("dd-mm-yyyy").format(LocalDateTime.now()));
+        date_now.setText(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now()));
         Timer timer = new Timer();
         TimerTask task = new TimerTask()
         {
@@ -132,6 +132,7 @@ public class ServerMain extends javax.swing.JFrame
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         aboutMenu = new javax.swing.JMenuItem();
+        Exit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Admin Central by Neeraj");
@@ -194,13 +195,6 @@ public class ServerMain extends javax.swing.JFrame
         public_Ip_Port.setEditable(false);
         public_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
         public_Ip_Port.setText("Loading...");
-        public_Ip_Port.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseEntered(java.awt.event.MouseEvent evt)
-            {
-                public_Ip_PortMouseEntered(evt);
-            }
-        });
 
         loc_Ip_Port.setEditable(false);
         loc_Ip_Port.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
@@ -284,6 +278,7 @@ public class ServerMain extends javax.swing.JFrame
         jMenu1.setText("Options");
 
         aboutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.SHIFT_MASK));
+        aboutMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/about_menu.png"))); // NOI18N
         aboutMenu.setText("About");
         aboutMenu.addActionListener(new java.awt.event.ActionListener()
         {
@@ -293,6 +288,18 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
         jMenu1.add(aboutMenu);
+
+        Exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        Exit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/exit_menu.png"))); // NOI18N
+        Exit.setText("Exit");
+        Exit.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ExitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(Exit);
 
         jMenuBar1.add(jMenu1);
 
@@ -496,12 +503,7 @@ public class ServerMain extends javax.swing.JFrame
                 portField.setEnabled(false);
                 serverStatus.setForeground(new Color(9, 110, 35));
                 serverStatus.setText("Server is Running...");
-
-//                //updating fields for useful information
-//                loc_Ip_Port.setText(new IpAPI().loc_Ip() + " : " + port);
-//                public_Ip_Port.setText(new IpAPI().pub_Ip());
-                // now = LocalDateTime.now();
-                //Updating status field for Active participants info
+                loc_Ip_Port.setText(new IpAPI().loc_Ip() + " : " + port);
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Success, the Server is now listening on the port " + port + ".....");
                 try
                 {
@@ -515,41 +517,6 @@ public class ServerMain extends javax.swing.JFrame
             }
         }
     }//GEN-LAST:event_serverStartBtnActionPerformed
-
-    private void public_Ip_PortMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_public_Ip_PortMouseEntered
-    {//GEN-HEADEREND:event_public_Ip_PortMouseEntered
-        if(isAlreadyEntered == false)
-        {
-            isAlreadyEntered = Boolean.TRUE;
-            /**
-             * @author Codyneeraj Setting below if(2) condition to be true
-             * always as above from now on (first entrance of mouse) to utilize
-             * the performance improvements by avoiding continuously checking of
-             * public IP from external (API of finding IPv4 Address) as
-             * mentioned in utilities class, this semantic block will make sure
-             * that it should not get executed again and again causing
-             * performance overhead and application lagging..
-             */
-            IpAPI obj = new IpAPI();
-            obj.setPriority(1);
-            obj.start();
-            String ip = obj.pub_Ip();
-            if(ip.equalsIgnoreCase("Offline"))
-            {
-                public_Ip_Port.setText("Offline");
-            }
-            else
-            {
-                public_Ip_Port.setText(ip + " : " + port);
-            }
-        }
-
-        if(isAlreadyEntered == true)
-        {
-            //do nothing if mouse entered next time again from now on
-            //(solved the problem of UI hanging if hovered again and again)
-        }
-    }//GEN-LAST:event_public_Ip_PortMouseEntered
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
@@ -615,6 +582,7 @@ public class ServerMain extends javax.swing.JFrame
                 run.interrupt();
                 ss.close();
                 portField.setEnabled(true);
+                loc_Ip_Port.setText(new IpAPI().loc_Ip());
                 serverStartBtn.setEnabled(true);
                 serverStatus.setForeground(Color.red);
                 serverStatus.setText("Offline");
@@ -636,52 +604,7 @@ public class ServerMain extends javax.swing.JFrame
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
-        Object choice[] =
-        {
-            "Yes", "No"
-        };
-        // Object defaultchoice = choice[0];
-        //can also be specified as an Object
-        int selectedValue = JOptionPane.showOptionDialog(
-                rootPane,
-                "Exiting will close this sever's session ?",
-                "Confirm",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                choice,
-                choice[0]
-        );
-
-        if(selectedValue == JOptionPane.YES_OPTION)
-        {
-            try
-            {
-                if(ss != null)//server was initialised somewhat before
-                {
-                    if(!ss.isClosed())//server is running still
-                    {
-                        serverStopBtn.doClick();//calling to stop the server
-                    }
-                }
-                logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
-                logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
-                        + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
-                        + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
-                        + "\n-------------------------------------------------[Closed]-------------------------------------------------"
-                        + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
-                logFileWriter.close();
-            }
-            catch(Exception ex)
-            {
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            System.exit(0);
-        }
-        if(selectedValue == JOptionPane.NO_OPTION)
-        {
-            System.out.println("Not exiting");
-        }
+        ClosingTask();
     }//GEN-LAST:event_formWindowClosing
 
     private void activeUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_activeUsersActionPerformed
@@ -693,6 +616,11 @@ public class ServerMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_aboutMenuActionPerformed
         new about_form().setVisible(true);
     }//GEN-LAST:event_aboutMenuActionPerformed
+
+    private void ExitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ExitActionPerformed
+    {//GEN-HEADEREND:event_ExitActionPerformed
+        ClosingTask();
+    }//GEN-LAST:event_ExitActionPerformed
 
     /**
      * @param args the command line arguments
@@ -708,6 +636,7 @@ public class ServerMain extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
+    private javax.swing.JMenuItem Exit;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel date_now;
@@ -872,5 +801,60 @@ public class ServerMain extends javax.swing.JFrame
         });
 
         run.start();
+    }
+
+    /**
+     * Display the closing option before Calling closing window(frame)
+     *
+     * @return Nothing XD
+     */
+    private void ClosingTask()
+    {
+        Object choice[] =
+        {
+            "Yes", "No"
+        };
+        // Object defaultchoice = choice[0];
+        //can also be specified as an Object
+        int selectedValue = JOptionPane.showOptionDialog(
+                rootPane,
+                "Exiting will close this sever's session ?",
+                "Confirm",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choice,
+                choice[0]
+        );
+
+        if(selectedValue == JOptionPane.YES_OPTION)
+        {
+            try
+            {
+                if(ss != null)//server was initialised somewhat before
+                {
+                    if(!ss.isClosed())//server is running still
+                    {
+                        serverStopBtn.doClick();//calling to stop the server
+                    }
+                }
+                logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+                logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
+                        + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
+                        + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
+                        + "\n-------------------------------------------------[Closed]-------------------------------------------------"
+                        + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+                logFileWriter.close();
+            }
+            catch(Exception ex)
+            {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.exit(0);
+        }
+        if(selectedValue == JOptionPane.NO_OPTION)
+        {
+            System.out.println("Not exiting");
+        }
     }
 }

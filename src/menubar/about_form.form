@@ -111,7 +111,7 @@
           <Font name="Segoe UI Semibold" size="16" style="1"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Commuter V1.2"/>
+        <Property name="text" type="java.lang.String" value="Socketty V1.3"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
@@ -180,7 +180,7 @@
           <Font name="Segoe UI Semibold" size="11" style="0"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;&lt;html&gt;A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to configure Communicate with one another using better features than before ... !!&quot;" type="code"/>
+          <Connection code="&quot;&lt;html&gt;A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to Communicate with one another using better features than before ... !!&quot;" type="code"/>
         </Property>
       </Properties>
     </Component>

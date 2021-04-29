@@ -70,13 +70,17 @@ public class Utilities
         }
     }
 
-    /*
-    * Since we are overidding the showOptiondialog, The YES/NO
-    * option are overrided to specified String of objects as coded
-    * by programmer For example YES_OPTION = object string[0] and
-    * NO_OPTION = object string[1] as specified so to check the
-    * input options we need to use default variables until now as i
-    * know --->
+    /**
+     * Takes the user to the Specified Url as mentioned in String of url
+     *
+     * <br><br><b>Note:</b><br>
+     *
+     * Since we are overidding the showOptiondialog, The YES/NO
+     * option are overrided to specified String of objects as coded
+     * by programmer For example YES_OPTION = object string[0] and
+     * NO_OPTION = object string[1] as specified so to check the
+     * input options we need to use default variables until now as i
+     * know --->
      */
     public void feedback()
     {
@@ -96,7 +100,7 @@ public class Utilities
         );
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            String url = "https://forms.gle/ZkyanznFEqpLrrWf8";
+            String url = "https://www.google.com";
             if(Desktop.isDesktopSupported())
             {
                 Desktop desktop = Desktop.getDesktop();
@@ -134,9 +138,7 @@ public class Utilities
         );
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            System.out.println("Browser is opened.. for codyneeraj site");
-            //program keeps running smoothly
-            String url = "https://github.com/CodyNeeraj/Hotspot_Utility";
+            String url = "https://github.com/CodyNeeraj";
             if(Desktop.isDesktopSupported())
             {
                 Desktop desktop = Desktop.getDesktop();

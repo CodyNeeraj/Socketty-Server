@@ -70,7 +70,7 @@ public class about_form extends javax.swing.JFrame
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Commuter V1.2");
+        jLabel1.setText("Socketty V1.3");
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/about_side_icon.png"))); // NOI18N
@@ -113,7 +113,7 @@ public class about_form extends javax.swing.JFrame
         jLabel9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
-        jLabel4.setText("<html>A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to configure Communicate with one another using better features than before ... !!");
+        jLabel4.setText("<html>A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to Communicate with one another using better features than before ... !!");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
