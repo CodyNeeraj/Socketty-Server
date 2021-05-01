@@ -65,7 +65,7 @@ public class about_form extends javax.swing.JFrame
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("About");
+        setTitle("About Socketty");
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N

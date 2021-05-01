@@ -135,7 +135,7 @@ public class ServerMain extends javax.swing.JFrame
         Exit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Admin Central by Neeraj");
+        setTitle("CodyNeeraj's Socketty");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter()
         {
