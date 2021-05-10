@@ -555,7 +555,6 @@ public class ServerMain extends javax.swing.JFrame
 
     private void serverStopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStopBtnActionPerformed
     {//GEN-HEADEREND:event_serverStopBtnActionPerformed
-
         Object choice[] =
         {
             "Yes", "No"
@@ -577,29 +576,17 @@ public class ServerMain extends javax.swing.JFrame
 
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            try
-            {
-                run.interrupt();
-                ss.close();
-                portField.setEnabled(true);
-                loc_Ip_Port.setText(new IpAPI().loc_Ip());
-                serverStartBtn.setEnabled(true);
-                serverStatus.setForeground(Color.red);
-                serverStatus.setText("Offline");
-                serverStopBtn.setEnabled(false);
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
-                CurrStatus.append("----------------------------------------------------------------------------------------------------------");
-            }
-            catch(Exception ex)
-            {
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-                serverStopBtn.setEnabled(true);
-            }
+            System.out.println("Exiting now");
+            callableDuringExiting();
         }
         else if(selectedValue == JOptionPane.NO_OPTION)
         {
+            System.out.println("NO pressed");
         }
-
+        else if(selectedValue == JOptionPane.CLOSED_OPTION)
+        {
+            System.out.println("Cancelled stop dialog");
+        }
     }//GEN-LAST:event_serverStopBtnActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
@@ -763,11 +750,13 @@ public class ServerMain extends javax.swing.JFrame
                 //Failure of creation of above folder in the root path can cause
                 //null pointer exception -------!!!
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dataDir.getPath() + " Created Succesfully");
+
             }
         }
         catch(IOException ex)
         {
-            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerMain.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -820,7 +809,7 @@ public class ServerMain extends javax.swing.JFrame
                 rootPane,
                 "Exiting will close this sever's session ?",
                 "Confirm",
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 choice,
@@ -845,16 +834,44 @@ public class ServerMain extends javax.swing.JFrame
                         + "\n-------------------------------------------------[Closed]-------------------------------------------------"
                         + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
                 logFileWriter.close();
+
             }
             catch(Exception ex)
             {
-                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ServerMain.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
             System.exit(0);
         }
-        if(selectedValue == JOptionPane.NO_OPTION)
+        else if(selectedValue == JOptionPane.NO_OPTION)
         {
             System.out.println("Not exiting");
+        }
+        else if(selectedValue == JOptionPane.CLOSED_OPTION)
+        {
+            System.out.println("Cancelled");
+        }
+    }
+
+    private void callableDuringExiting()
+    {
+        try
+        {
+            run.interrupt();
+            ss.close();
+            portField.setEnabled(true);
+            loc_Ip_Port.setText(new IpAPI().loc_Ip());
+            serverStartBtn.setEnabled(true);
+            serverStatus.setForeground(Color.red);
+            serverStatus.setText("Offline");
+            serverStopBtn.setEnabled(false);
+            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
+            CurrStatus.append("----------------------------------------------------------------------------------------------------------");
+        }
+        catch(IOException ex)
+        {
+            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            serverStopBtn.setEnabled(true);
         }
     }
 }
