@@ -17,6 +17,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -57,28 +58,29 @@ public class ServerMain extends javax.swing.JFrame
     private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
     private File logDir = new File("logs");
     private File dataDir = new File("data");
-    private String logFileName = "Server-" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
+    private String logFileName = "Server_" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
     private File logFile = new File(logDir + File.separator + logFileName);
     // FileUtils.writeStringToFile(file, "String to append", true);
     private BufferedWriter logFileWriter;
     private ServerSocket ss;
     private Thread run;
-    private boolean isAlreadyEntered;
     private int port = 0;
+    private boolean isReadyToClose;
 
     public ServerMain()
     {
         try
         {
+            //will set the default installed l&F as windows Native
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //will set the default installed l&F as windows Native
         }
         catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
         {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
         date_now.setText(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now()));
         Timer timer = new Timer();
         TimerTask task = new TimerTask()
@@ -105,7 +107,7 @@ public class ServerMain extends javax.swing.JFrame
 
         jLabel1 = new javax.swing.JLabel();
         portNumber = new javax.swing.JLabel();
-        serverStartBtn = new javax.swing.JButton();
+        StartBtn = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         portField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -123,7 +125,7 @@ public class ServerMain extends javax.swing.JFrame
         jLabel10 = new javax.swing.JLabel();
         serverStatus = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        serverStopBtn = new javax.swing.JButton();
+        StopBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         CurrStatus = new javax.swing.JTextArea();
         date_now = new javax.swing.JLabel();
@@ -131,6 +133,9 @@ public class ServerMain extends javax.swing.JFrame
         time_now = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        info_menu = new javax.swing.JMenu();
+        logging_info = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         aboutMenu = new javax.swing.JMenuItem();
         Exit = new javax.swing.JMenuItem();
 
@@ -151,14 +156,14 @@ public class ServerMain extends javax.swing.JFrame
         portNumber.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         portNumber.setText("Enter Port");
 
-        serverStartBtn.setBackground(new java.awt.Color(0, 204, 0));
-        serverStartBtn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        serverStartBtn.setText("Start");
-        serverStartBtn.addActionListener(new java.awt.event.ActionListener()
+        StartBtn.setBackground(new java.awt.Color(0, 204, 0));
+        StartBtn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        StartBtn.setText("Start");
+        StartBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                serverStartBtnActionPerformed(evt);
+                StartBtnActionPerformed(evt);
             }
         });
 
@@ -240,15 +245,15 @@ public class ServerMain extends javax.swing.JFrame
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel12.setText("Active Clients");
 
-        serverStopBtn.setBackground(new java.awt.Color(255, 153, 153));
-        serverStopBtn.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
-        serverStopBtn.setText("Stop");
-        serverStopBtn.setEnabled(false);
-        serverStopBtn.addActionListener(new java.awt.event.ActionListener()
+        StopBtn.setBackground(new java.awt.Color(255, 153, 153));
+        StopBtn.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
+        StopBtn.setText("Stop");
+        StopBtn.setEnabled(false);
+        StopBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                serverStopBtnActionPerformed(evt);
+                StopBtnActionPerformed(evt);
             }
         });
 
@@ -276,6 +281,24 @@ public class ServerMain extends javax.swing.JFrame
         time_now.setForeground(new java.awt.Color(0, 0, 255));
 
         jMenu1.setText("Options");
+
+        info_menu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/info_icon.png"))); // NOI18N
+        info_menu.setText("Info");
+
+        logging_info.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.SHIFT_MASK));
+        logging_info.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/log_menu.png"))); // NOI18N
+        logging_info.setText("Logging");
+        logging_info.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                logging_infoActionPerformed(evt);
+            }
+        });
+        info_menu.add(logging_info);
+
+        jMenu1.add(info_menu);
+        jMenu1.add(jSeparator2);
 
         aboutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.SHIFT_MASK));
         aboutMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/about_menu.png"))); // NOI18N
@@ -356,8 +379,8 @@ public class ServerMain extends javax.swing.JFrame
                             .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, serverStartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, serverStopBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, StartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, StopBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(21, 21, 21))))
             .add(layout.createSequentialGroup()
                 .addContainerGap()
@@ -413,7 +436,7 @@ public class ServerMain extends javax.swing.JFrame
                                 .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                     .add(layout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(serverStartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(StartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
@@ -428,7 +451,7 @@ public class ServerMain extends javax.swing.JFrame
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(serverPass)
                             .add(passField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(serverStopBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(StopBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 279, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -443,8 +466,8 @@ public class ServerMain extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void serverStartBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStartBtnActionPerformed
-    {//GEN-HEADEREND:event_serverStartBtnActionPerformed
+    private void StartBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StartBtnActionPerformed
+    {//GEN-HEADEREND:event_StartBtnActionPerformed
         boolean isBindException, isIOException, isIllegalArgument, isNullPointerException;
         isBindException = isIOException = isIllegalArgument = isNullPointerException = false;
         try
@@ -498,8 +521,8 @@ public class ServerMain extends javax.swing.JFrame
             {
                 //enabling btn for use now
                 refreshBtn.setEnabled(true);
-                serverStartBtn.setEnabled(false);
-                serverStopBtn.setEnabled(true);
+                StartBtn.setEnabled(false);
+                StopBtn.setEnabled(true);
                 portField.setEnabled(false);
                 serverStatus.setForeground(new Color(9, 110, 35));
                 serverStatus.setText("Server is Running...");
@@ -516,7 +539,7 @@ public class ServerMain extends javax.swing.JFrame
                 }
             }
         }
-    }//GEN-LAST:event_serverStartBtnActionPerformed
+    }//GEN-LAST:event_StartBtnActionPerformed
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshBtnActionPerformed
     {//GEN-HEADEREND:event_refreshBtnActionPerformed
@@ -553,8 +576,8 @@ public class ServerMain extends javax.swing.JFrame
         dirVerifier();
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
-    private void serverStopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_serverStopBtnActionPerformed
-    {//GEN-HEADEREND:event_serverStopBtnActionPerformed
+    private void StopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StopBtnActionPerformed
+    {//GEN-HEADEREND:event_StopBtnActionPerformed
         Object choice[] =
         {
             "Yes", "No"
@@ -567,7 +590,8 @@ public class ServerMain extends javax.swing.JFrame
                 + "to this server to halt the connection and\n"
                 + "disconnect ...!",
                 "Confirm Stop Server",
-                JOptionPane.YES_NO_OPTION,
+                // JOptionPane.YES_NO_OPTION,
+                JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 choice,
@@ -576,8 +600,25 @@ public class ServerMain extends javax.swing.JFrame
 
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            System.out.println("Exiting now");
-            callableDuringExiting();
+            try
+            {
+                run.interrupt();
+                ss.close();
+                isReadyToClose = true;
+                portField.setEnabled(true);
+                loc_Ip_Port.setText(new IpAPI().loc_Ip());
+                StartBtn.setEnabled(true);
+                serverStatus.setForeground(Color.red);
+                serverStatus.setText("Offline");
+                StopBtn.setEnabled(false);
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
+                CurrStatus.append("----------------------------------------------------------------------------------------------------------");
+            }
+            catch(IOException ex)
+            {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                StopBtn.setEnabled(true);
+            }
         }
         else if(selectedValue == JOptionPane.NO_OPTION)
         {
@@ -587,7 +628,7 @@ public class ServerMain extends javax.swing.JFrame
         {
             System.out.println("Cancelled stop dialog");
         }
-    }//GEN-LAST:event_serverStopBtnActionPerformed
+    }//GEN-LAST:event_StopBtnActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
@@ -609,6 +650,19 @@ public class ServerMain extends javax.swing.JFrame
         ClosingTask();
     }//GEN-LAST:event_ExitActionPerformed
 
+    private void logging_infoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_logging_infoActionPerformed
+    {//GEN-HEADEREND:event_logging_infoActionPerformed
+        JOptionPane.showMessageDialog(
+                rootPane,
+                "Socketty has the ability to log all the history i.e things\n"
+                + "happened during active sessions and to save them in a text\n"
+                + "file named by the date on which the program got executed\n"
+                + "and this file saved under logs directory, You are requested\n"
+                + "to read all the Instructions and don't perform any unEthical\n"
+                + "actions which can made this program brittle in working !!", "Information",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_logging_infoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -624,9 +678,12 @@ public class ServerMain extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
     private javax.swing.JMenuItem Exit;
+    private javax.swing.JButton StartBtn;
+    private javax.swing.JButton StopBtn;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JComboBox<String> activeUsers;
     private javax.swing.JLabel date_now;
+    private javax.swing.JMenu info_menu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -640,17 +697,17 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField loc_Ip_Port;
+    private javax.swing.JMenuItem logging_info;
     private javax.swing.JTextField passField;
     private javax.swing.JTextField portField;
     private javax.swing.JLabel portNumber;
     private javax.swing.JTextField public_Ip_Port;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JLabel serverPass;
-    private javax.swing.JButton serverStartBtn;
     private javax.swing.JLabel serverStatus;
-    private javax.swing.JButton serverStopBtn;
     private javax.swing.JLabel time_now;
     // End of variables declaration//GEN-END:variables
 
@@ -762,6 +819,7 @@ public class ServerMain extends javax.swing.JFrame
 
     private void execute() throws Exception
     {
+        isReadyToClose = false;
         //Calling start Method
         Method.setClients(new ArrayList<>());
         /**
@@ -807,9 +865,9 @@ public class ServerMain extends javax.swing.JFrame
         //can also be specified as an Object
         int selectedValue = JOptionPane.showOptionDialog(
                 rootPane,
-                "Exiting will close this sever's session ?",
+                "Exiting will close this server's session ?",
                 "Confirm",
-                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 choice,
@@ -818,30 +876,28 @@ public class ServerMain extends javax.swing.JFrame
 
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            try
+            if(ss != null)//server was initialised somewhat before
             {
-                if(ss != null)//server was initialised somewhat before
+                if(!ss.isClosed())//server is running still
                 {
-                    if(!ss.isClosed())//server is running still
+                    StopBtn.doClick();//calling to stop the server
+                    if(isReadyToClose == true)
                     {
-                        serverStopBtn.doClick();//calling to stop the server
+                        logFooter();
+                        System.exit(0);
                     }
                 }
-                logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
-                logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
-                        + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
-                        + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
-                        + "\n-------------------------------------------------[Closed]-------------------------------------------------"
-                        + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
-                logFileWriter.close();
-
+                else if(ss.isClosed())
+                {
+                    logFooter();
+                    System.exit(0);
+                }
             }
-            catch(Exception ex)
+            else if(ss == null)
             {
-                Logger.getLogger(ServerMain.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                logFooter();
+                System.exit(0);
             }
-            System.exit(0);
         }
         else if(selectedValue == JOptionPane.NO_OPTION)
         {
@@ -853,25 +909,21 @@ public class ServerMain extends javax.swing.JFrame
         }
     }
 
-    private void callableDuringExiting()
+    private void logFooter()
     {
         try
         {
-            run.interrupt();
-            ss.close();
-            portField.setEnabled(true);
-            loc_Ip_Port.setText(new IpAPI().loc_Ip());
-            serverStartBtn.setEnabled(true);
-            serverStatus.setForeground(Color.red);
-            serverStatus.setText("Offline");
-            serverStopBtn.setEnabled(false);
-            CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Server Stopped Succesfully !\n");
-            CurrStatus.append("----------------------------------------------------------------------------------------------------------");
+            logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
+            logFileWriter.write(CurrStatus.getText() + "\n\nFile Last Opened/Modified : "
+                    + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())
+                    + " Dated : " + DateTimeFormatter.ofPattern("dd/MMMM/yyyy").format(LocalDateTime.now())
+                    + "\n-------------------------------------------------[Exited]-------------------------------------------------"
+                    + "\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+            logFileWriter.close();
         }
         catch(IOException ex)
         {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-            serverStopBtn.setEnabled(true);
         }
     }
 }

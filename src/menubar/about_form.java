@@ -24,6 +24,7 @@
 package menubar;
 
 import functions.Utilities;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -39,7 +40,7 @@ public class about_form extends javax.swing.JFrame
     {
 
         initComponents();
-        // this.setIconImage(new ImageIcon(getClass().getResource("/icons/title_icon.png")).getImage());
+        this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
     }
 
     /**
