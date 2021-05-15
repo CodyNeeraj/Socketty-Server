@@ -1,6 +1,6 @@
 /build/
 /dist/
-/nbproject/private/profiler
+/nbproject/private/profiler/
 /test/
 /*.class
 /data/
