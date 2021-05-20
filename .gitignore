@@ -1,8 +1,38 @@
+.project
+.classpath
+factoryConfiguration.json
+
+
+### NetBeans ###
 /build/
 /dist/
-/nbproject/private/profiler/
 /test/
 /*.class
 /data/
-/manifest.mf
 /logs/
+/nbproject/private/profiler
+/nbproject/Makefile-*.mk
+/nbproject/Package-*.bash
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+/manifest.mf
+
+#Contains bookmark of the last editing tab opened
+/nbproject/private/private.xml
+
+
+# Compiled class file
+/.class
+
+# Log files
+/.log
+
+# Packaged Files #
+/*.jar
+/*.war
+/*.nar
+/*.ear
+/*.zip
+/*.tar.gz
+/*.rar
