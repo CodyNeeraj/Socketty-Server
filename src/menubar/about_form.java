@@ -191,7 +191,7 @@ public class about_form extends javax.swing.JFrame
                         .addGap(10, 10, 10)
                         .addComponent(feedback_label))
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         pack();
