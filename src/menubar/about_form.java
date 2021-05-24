@@ -23,8 +23,13 @@
  */
 package menubar;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import functions.Utilities;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -38,6 +43,14 @@ public class about_form extends javax.swing.JFrame
      */
     public about_form()
     {
+        try
+        {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        }
+        catch(UnsupportedLookAndFeelException ex)
+        {
+            Logger.getLogger(about_form.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         initComponents();
         this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
@@ -246,12 +259,9 @@ public class about_form extends javax.swing.JFrame
         /*
          * Create and display the form
          */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater(() ->
         {
-            public void run()
-            {
-                new about_form().setVisible(true);
-            }
+            new about_form().setVisible(true);
         });
     }
 
