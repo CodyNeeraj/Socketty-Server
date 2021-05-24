@@ -114,7 +114,7 @@ public class Client extends Thread
                     {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + fileName);
+                    Method.getTxt().append("\n[" + forLog.format(LocalDateTime.now()) + "]  " + userName + " sent " + ms.getName());
                     Method.setFileID(fileID + 1);
                     ms = new Message();
                     ms.setStatus("File");
