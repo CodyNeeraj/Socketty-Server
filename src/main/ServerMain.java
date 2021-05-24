@@ -195,24 +195,10 @@ public class ServerMain extends javax.swing.JFrame
         serverPass.setText("Password");
 
         activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
-        activeUsers.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                activeUsersActionPerformed(evt);
-            }
-        });
 
         public_Ip_Port.setEditable(false);
         public_Ip_Port.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         public_Ip_Port.setText("Loading...");
-        public_Ip_Port.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                public_Ip_PortActionPerformed(evt);
-            }
-        });
 
         loc_Ip_Port.setEditable(false);
         loc_Ip_Port.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -228,13 +214,6 @@ public class ServerMain extends javax.swing.JFrame
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
             {
-            }
-        });
-        loc_Ip_Port.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                loc_Ip_PortActionPerformed(evt);
             }
         });
 
@@ -674,11 +653,6 @@ public class ServerMain extends javax.swing.JFrame
         ClosingTask();
     }//GEN-LAST:event_formWindowClosing
 
-    private void activeUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_activeUsersActionPerformed
-    {//GEN-HEADEREND:event_activeUsersActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_activeUsersActionPerformed
-
     private void aboutMenuActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_aboutMenuActionPerformed
     {//GEN-HEADEREND:event_aboutMenuActionPerformed
         new about_form().setVisible(true);
@@ -711,20 +685,10 @@ public class ServerMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_mutexCheckboxItemStateChanged
 
-    private void public_Ip_PortActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_public_Ip_PortActionPerformed
-    {//GEN-HEADEREND:event_public_Ip_PortActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_public_Ip_PortActionPerformed
-
     private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
     {//GEN-HEADEREND:event_portFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_portFieldActionPerformed
-
-    private void loc_Ip_PortActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_loc_Ip_PortActionPerformed
-    {//GEN-HEADEREND:event_loc_Ip_PortActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_loc_Ip_PortActionPerformed
 
     /**
      * @param args the command line arguments

@@ -360,9 +360,6 @@
           <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { })" type="code"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="activeUsersActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="ServerMain_activeUsers"/>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -378,9 +375,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Loading..."/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="public_Ip_PortActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="loc_Ip_Port">
       <Properties>
@@ -392,7 +386,6 @@
       </Properties>
       <Events>
         <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="loc_Ip_PortAncestorAdded"/>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loc_Ip_PortActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="refreshBtn">
