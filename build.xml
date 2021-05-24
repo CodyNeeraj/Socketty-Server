@@ -85,7 +85,8 @@
             <zipfileset src="libs/beansbinding-1.2.1.jar" excludes="META-INF/*" />
             <zipfileset src="libs/swing-layout-1.0.4.jar" excludes="META-INF/*" />
             <zipfileset src="libs/Message.jar"            excludes="META-INF/*" /> 
-
+            <zipfileset src="libs/flatlaf-1.2.jar"        excludes="META-INF/*" />
+            
             <!-- Also add everything from this dependency in the libs folder except its manifest file into the new jar file. (Do this for every dependency) -->
   
             <manifest>    

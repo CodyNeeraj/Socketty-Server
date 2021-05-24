@@ -1,9 +1,10 @@
 package main;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import functions.Client;
 import functions.IpAPI;
 import functions.Method;
-import functions.MutexCreator;
+import functions.MutexDeployer;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -73,10 +74,11 @@ public class ServerMain extends javax.swing.JFrame
         try
         {
             //will set the default installed l&F as windows Native
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(new FlatLightLaf());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
-        catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+        catch(UnsupportedLookAndFeelException ex)
         {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -132,6 +134,7 @@ public class ServerMain extends javax.swing.JFrame
         date_now = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         time_now = new javax.swing.JLabel();
+        mutexCheckbox = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         info_menu = new javax.swing.JMenu();
@@ -281,6 +284,17 @@ public class ServerMain extends javax.swing.JFrame
         time_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
         time_now.setForeground(new java.awt.Color(0, 0, 255));
 
+        mutexCheckbox.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
+        mutexCheckbox.setSelected(true);
+        mutexCheckbox.setText("Mutex Locking");
+        mutexCheckbox.addItemListener(new java.awt.event.ItemListener()
+        {
+            public void itemStateChanged(java.awt.event.ItemEvent evt)
+            {
+                mutexCheckboxItemStateChanged(evt);
+            }
+        });
+
         jMenu1.setText("Options");
 
         info_menu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/info_icon.png"))); // NOI18N
@@ -361,7 +375,7 @@ public class ServerMain extends javax.swing.JFrame
                             .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 470, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(0, 12, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(portNumber)
@@ -376,8 +390,11 @@ public class ServerMain extends javax.swing.JFrame
                             .add(layout.createSequentialGroup()
                                 .add(jLabel1)
                                 .add(35, 35, 35)
-                                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(layout.createSequentialGroup()
+                                .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(mutexCheckbox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, StartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -428,7 +445,9 @@ public class ServerMain extends javax.swing.JFrame
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(layout.createSequentialGroup()
                         .add(12, 12, 12)
-                        .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(mutexCheckbox))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel1)
@@ -664,6 +683,15 @@ public class ServerMain extends javax.swing.JFrame
                 JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_logging_infoActionPerformed
 
+    private void mutexCheckboxItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_mutexCheckboxItemStateChanged
+    {//GEN-HEADEREND:event_mutexCheckboxItemStateChanged
+        if(!mutexCheckbox.isSelected())
+        {
+            mutexCheckbox.setEnabled(false);
+            new MutexDeployer().MutexDestroyer();
+        }
+    }//GEN-LAST:event_mutexCheckboxItemStateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -672,7 +700,8 @@ public class ServerMain extends javax.swing.JFrame
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
         {
-            new MutexCreator().MutexGenerator();
+            //Generate Mutex Evertime During running operation
+            new MutexDeployer().MutexGenerator();
             new ServerMain().setVisible(true);
         });
     }
@@ -703,6 +732,7 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField loc_Ip_Port;
     private javax.swing.JMenuItem logging_info;
+    private javax.swing.JCheckBox mutexCheckbox;
     private javax.swing.JTextField passField;
     private javax.swing.JTextField portField;
     private javax.swing.JLabel portNumber;
