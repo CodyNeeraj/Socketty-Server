@@ -3,6 +3,7 @@ package main;
 import functions.Client;
 import functions.IpAPI;
 import functions.Method;
+import functions.MutexCreator;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -671,6 +672,7 @@ public class ServerMain extends javax.swing.JFrame
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
         {
+            new MutexCreator().MutexGenerator();
             new ServerMain().setVisible(true);
         });
     }
