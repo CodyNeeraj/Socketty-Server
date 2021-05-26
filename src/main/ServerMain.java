@@ -6,6 +6,7 @@ import functions.IpAPI;
 import functions.Method;
 import functions.MutexDeployer;
 import java.awt.Color;
+import java.awt.SystemTray;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -96,6 +97,7 @@ public class ServerMain extends javax.swing.JFrame
         };
         timer.scheduleAtFixedRate(task, 1000, 1000);
         CurrStatus.append("------------------------------------------------[Started]-------------------------------------------------\n");
+        dirVerifier();
     }
 
     /**
@@ -586,12 +588,10 @@ public class ServerMain extends javax.swing.JFrame
         {
             public_Ip_Port.setText("Offline");
         }
-
         else
         {
             public_Ip_Port.setText(ip);
         }
-        dirVerifier();
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
     private void StopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StopBtnActionPerformed
@@ -650,7 +650,16 @@ public class ServerMain extends javax.swing.JFrame
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
-        ClosingTask();
+        if(!SystemTray.isSupported())
+        {
+            ClosingTask();
+        }
+        if(SystemTray.isSupported())
+        {
+            //this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+            this.setVisible(false);
+            new SystemTrayLoader(this);
+        }
     }//GEN-LAST:event_formWindowClosing
 
     private void aboutMenuActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_aboutMenuActionPerformed
@@ -928,14 +937,14 @@ public class ServerMain extends javax.swing.JFrame
                 System.exit(0);
             }
         }
-        else if(selectedValue == JOptionPane.NO_OPTION)
-        {
-            System.out.println("Not exiting");
-        }
-        else if(selectedValue == JOptionPane.CLOSED_OPTION)
-        {
-            System.out.println("Cancelled");
-        }
+//        else if(selectedValue == JOptionPane.NO_OPTION)
+//        {
+//            System.out.println("Not exiting");
+//        }
+//        else if(selectedValue == JOptionPane.CLOSED_OPTION)
+//        {
+//            System.out.println("Cancelled");
+//        }
     }
 
     private void logFooter()
