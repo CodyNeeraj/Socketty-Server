@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -499,8 +500,9 @@ public class ServerMain extends javax.swing.JFrame
         PopupMenu = new PopupMenu();
         showItem = new MenuItem("Display");
         exitItem = new MenuItem("Exit");
-        ico = Toolkit.getDefaultToolkit().getImage("/icons/main_icon.png");
-        trayIcon = new TrayIcon(ico, "SystemTray Demo", PopupMenu);
+        URL url = System.class.getResource("/icons/tray_icon.png");
+        ico = Toolkit.getDefaultToolkit().getImage(url);
+        trayIcon = new TrayIcon(ico, "Socketty Server", PopupMenu);
         //adjust to default size as per system recommendation
         trayIcon.setImageAutoSize(true);
         PopupMenu.add(showItem);
@@ -524,6 +526,7 @@ public class ServerMain extends javax.swing.JFrame
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
         }
     }
+
     private void StartBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StartBtnActionPerformed
     {//GEN-HEADEREND:event_StartBtnActionPerformed
         boolean isBindException, isIOException, isIllegalArgument, isNullPointerException;
