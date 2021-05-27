@@ -5,8 +5,15 @@ import functions.Client;
 import functions.IpAPI;
 import functions.Method;
 import functions.MutexDeployer;
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -84,6 +91,7 @@ public class ServerMain extends javax.swing.JFrame
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         initComponents();
+        initComponentsNew();
         this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
         date_now.setText(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now()));
         Timer timer = new Timer();
@@ -486,6 +494,37 @@ public class ServerMain extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initComponentsNew()
+    {
+        SystemTray = SystemTray.getSystemTray();
+        PopupMenu = new PopupMenu();
+        showItem = new MenuItem("Display");
+        exitItem = new MenuItem("Exit");
+        ico = Toolkit.getDefaultToolkit().getImage("/icons/main_icon.png");
+        trayIcon = new TrayIcon(ico, "SystemTray Demo", PopupMenu);
+        //adjust to default size as per system recommendation
+        trayIcon.setImageAutoSize(true);
+        PopupMenu.add(showItem);
+        PopupMenu.add(exitItem);
+
+        showItem.addActionListener((java.awt.event.ActionEvent evt) ->
+        {
+            showItemActionPerformed(evt);
+        });
+
+        exitItem.addActionListener((ActionEvent evt) ->
+        {
+            exitItemActionPerformed(evt);
+        });
+        try
+        {
+            SystemTray.add(trayIcon);
+        }
+        catch(AWTException e)
+        {
+            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
     private void StartBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StartBtnActionPerformed
     {//GEN-HEADEREND:event_StartBtnActionPerformed
         boolean isBindException, isIOException, isIllegalArgument, isNullPointerException;
@@ -656,9 +695,7 @@ public class ServerMain extends javax.swing.JFrame
         }
         if(SystemTray.isSupported())
         {
-            //this.setDefaultCloseOperation(HIDE_ON_CLOSE);
             this.setVisible(false);
-            new SystemTrayLoader(this);
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -699,6 +736,18 @@ public class ServerMain extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_portFieldActionPerformed
 
+    private void showItemActionPerformed(ActionEvent evt)
+    {
+        this.setVisible(true);
+        this.revalidate();
+    }
+
+    private void exitItemActionPerformed(ActionEvent evt)
+    {
+        this.setVisible(true);
+        ClosingTask();
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -713,6 +762,12 @@ public class ServerMain extends javax.swing.JFrame
         });
     }
 
+    private SystemTray SystemTray;
+    private PopupMenu PopupMenu;
+    private MenuItem showItem;
+    private MenuItem exitItem;
+    private Image ico;
+    private TrayIcon trayIcon;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
     private javax.swing.JMenuItem Exit;
@@ -748,6 +803,37 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JLabel serverStatus;
     private javax.swing.JLabel time_now;
     // End of variables declaration//GEN-END:variables
+
+    private void DisplayTraypanel()
+    {
+//        final PopupMenu popup = new PopupMenu();
+//        final TrayIcon trayIcon = new TrayIcon(createImage("images/bulb.gif", "tray icon"));
+//        final SystemTray systemtray = SystemTray.getSystemTray();
+//        CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
+//        CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
+//        Menu displayMenu = new Menu("Display");
+//        MenuItem errorItem = new MenuItem("Error");
+//        MenuItem warningItem = new MenuItem("Warning");
+//        MenuItem infoItem = new MenuItem("Info");
+//        MenuItem noneItem = new MenuItem("None");
+//        MenuItem exitItem = new MenuItem("Exit");
+//        MenuItem aboutItem = new MenuItem("About");
+//
+//        //Add components to popup menu
+//        popup.add(aboutItem);
+//        popup.addSeparator();
+//        popup.add(cb1);
+//        popup.add(cb2);
+//        popup.addSeparator();
+//        popup.add(displayMenu);
+//        displayMenu.add(errorItem);
+//        displayMenu.add(warningItem);
+//        displayMenu.add(infoItem);
+//        displayMenu.add(noneItem);
+//        popup.add(exitItem);
+//
+//        trayIcon.setPopupMenu(popup);
+    }
 
     private void dirVerifier()
     {
