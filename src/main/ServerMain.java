@@ -77,6 +77,7 @@ public class ServerMain extends javax.swing.JFrame
     private Thread run;
     private int port = 0;
     private boolean isReadyToClose;
+    private boolean isAlreadyLoaded = false;
 
     public ServerMain()
     {
@@ -498,14 +499,17 @@ public class ServerMain extends javax.swing.JFrame
     {
         SystemTray = SystemTray.getSystemTray();
         PopupMenu = new PopupMenu();
-        showItem = new MenuItem("Display");
+        showItem = new MenuItem("Socketty");
+        showItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         exitItem = new MenuItem("Exit");
+        exitItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         URL url = System.class.getResource("/icons/tray_icon.png");
         ico = Toolkit.getDefaultToolkit().getImage(url);
         trayIcon = new TrayIcon(ico, "Socketty Server", PopupMenu);
         //adjust to default size as per system recommendation
         trayIcon.setImageAutoSize(true);
         PopupMenu.add(showItem);
+        PopupMenu.addSeparator();
         PopupMenu.add(exitItem);
 
         showItem.addActionListener((java.awt.event.ActionEvent evt) ->
@@ -621,18 +625,22 @@ public class ServerMain extends javax.swing.JFrame
 
     private void loc_Ip_PortAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_loc_Ip_PortAncestorAdded
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
-        loc_Ip_Port.setText(new IpAPI().loc_Ip());
-        IpAPI obj = new IpAPI();
-        obj.start();
-        String ip = obj.pub_Ip();
-        if(ip.equalsIgnoreCase("Offline"))
+        if(isAlreadyLoaded == false)
         {
-            public_Ip_Port.setText("Offline");
+            loc_Ip_Port.setText(new IpAPI().loc_Ip());
+            IpAPI obj = new IpAPI();
+            obj.start();
+            String ip = obj.pub_Ip();
+            if(ip.equalsIgnoreCase("Offline"))
+            {
+                public_Ip_Port.setText("Offline");
+            }
+            else
+            {
+                public_Ip_Port.setText(ip);
+            }
         }
-        else
-        {
-            public_Ip_Port.setText(ip);
-        }
+        isAlreadyLoaded = true;
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
     private void StopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StopBtnActionPerformed
