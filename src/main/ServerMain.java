@@ -163,14 +163,14 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel1.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
         jLabel1.setText("Select IP");
 
-        portNumber.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        portNumber.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
         portNumber.setText("Enter Port");
 
         StartBtn.setBackground(new java.awt.Color(0, 204, 0));
-        StartBtn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        StartBtn.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 18f));
         StartBtn.setText("Start");
         StartBtn.addActionListener(new java.awt.event.ActionListener()
         {
@@ -193,25 +193,25 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel3.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 12f));
         jLabel3.setText("(10-65535)");
         jLabel3.setToolTipText("");
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 1, 15)); // NOI18N
+        jLabel4.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 15f));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("Configuration");
 
-        serverPass.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        serverPass.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
         serverPass.setText("Password");
 
         activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
 
         public_Ip_Port.setEditable(false);
-        public_Ip_Port.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        public_Ip_Port.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 11f));
         public_Ip_Port.setText("Loading...");
 
         loc_Ip_Port.setEditable(false);
-        loc_Ip_Port.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        loc_Ip_Port.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 11f));
         loc_Ip_Port.setText("Loading...");
         loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
         {
@@ -239,24 +239,24 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel5.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 12f));
         jLabel5.setText("Local IP :");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel6.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 12f));
         jLabel6.setText("Public IP :");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel10.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 12f));
         jLabel10.setText("Current Status");
 
-        serverStatus.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        serverStatus.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 12f));
         serverStatus.setForeground(new java.awt.Color(255, 0, 0));
         serverStatus.setText("Not Running..");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel12.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 12f));
         jLabel12.setText("Active Clients");
 
         StopBtn.setBackground(new java.awt.Color(255, 153, 153));
-        StopBtn.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
+        StopBtn.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 17f));
         StopBtn.setText("Stop");
         StopBtn.setEnabled(false);
         StopBtn.addActionListener(new java.awt.event.ActionListener()
@@ -271,7 +271,7 @@ public class ServerMain extends javax.swing.JFrame
 
         CurrStatus.setEditable(false);
         CurrStatus.setColumns(20);
-        CurrStatus.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 11)); // NOI18N
+        CurrStatus.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         CurrStatus.setLineWrap(true);
         CurrStatus.setRows(5);
         CurrStatus.setTabSize(4);
@@ -280,17 +280,17 @@ public class ServerMain extends javax.swing.JFrame
         CurrStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(CurrStatus);
 
-        date_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        date_now.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         date_now.setForeground(new java.awt.Color(0, 0, 255));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        jLabel8.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         jLabel8.setForeground(new java.awt.Color(0, 0, 255));
         jLabel8.setText("Date-Time ::");
 
-        time_now.setFont(new java.awt.Font("Segoe UI Symbol", 0, 11)); // NOI18N
+        time_now.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         time_now.setForeground(new java.awt.Color(0, 0, 255));
 
-        mutexCheckbox.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
+        mutexCheckbox.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 11f));
         mutexCheckbox.setSelected(true);
         mutexCheckbox.setText("Mutex Locking");
         mutexCheckbox.addItemListener(new java.awt.event.ItemListener()
@@ -376,7 +376,6 @@ public class ServerMain extends javax.swing.JFrame
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                         .add(serverStatus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                                     .add(layout.createSequentialGroup()
-                                        .add(0, 0, 0)
                                         .add(jLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                         .add(activeUsers, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))

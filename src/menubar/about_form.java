@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import main.SystemFontLoader;
 
 /**
  *
@@ -82,7 +83,7 @@ public class about_form extends javax.swing.JFrame
         setTitle("About Socketty");
         setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
+        jLabel1.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 16f));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Socketty V1.3");
 
@@ -120,13 +121,13 @@ public class about_form extends javax.swing.JFrame
 
         jLabel7.setText("Developer :");
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 1, 11)); // NOI18N
+        jLabel8.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 11f));
         jLabel8.setText("Neeraj (aka) CodyNeeraj");
 
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/java_about.png"))); // NOI18N
         jLabel9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
+        jLabel4.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 11f));
         jLabel4.setText("<html>A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to Communicate with one another using better features than before ... !!");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -107,8 +107,8 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI Semibold" size="16" style="1"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 16f)" type="code"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="Socketty V1.3"/>
@@ -160,8 +160,8 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
       <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI Semibold" size="11" style="1"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 11f)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Neeraj (aka) CodyNeeraj"/>
       </Properties>
@@ -176,8 +176,8 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI Semibold" size="11" style="0"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(1, 11f)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="&quot;&lt;html&gt;A Realtime Centralised MultiClient Chat Server written in JAVA for making it easier to Communicate with one another using better features than before ... !!&quot;" type="code"/>
