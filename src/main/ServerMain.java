@@ -282,7 +282,7 @@ public class ServerMain extends javax.swing.JFrame
         CurrStatus.setRows(5);
         CurrStatus.setTabSize(4);
         CurrStatus.setWrapStyleWord(true);
-        CurrStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        CurrStatus.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         CurrStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(CurrStatus);
 
