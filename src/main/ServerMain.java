@@ -64,7 +64,7 @@ import menubar.about_form;
 public class ServerMain extends javax.swing.JFrame
 {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5455364458445364L;
     private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
     private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
     private File logDir = new File("logs");
@@ -217,14 +217,14 @@ public class ServerMain extends javax.swing.JFrame
         loc_Ip_Port.setText("Loading...");
         loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
         {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
                 loc_Ip_PortAncestorAdded(evt);
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
             {
             }
         });
@@ -270,6 +270,10 @@ public class ServerMain extends javax.swing.JFrame
         });
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jScrollPane1.setAutoscrolls(true);
+        jScrollPane1.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
 
         CurrStatus.setEditable(false);
         CurrStatus.setColumns(20);
@@ -500,14 +504,21 @@ public class ServerMain extends javax.swing.JFrame
         SystemTray = SystemTray.getSystemTray();
         PopupMenu = new PopupMenu();
         showItem = new MenuItem("Socketty");
-        showItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         exitItem = new MenuItem("Exit");
+        listeningTo = new MenuItem("");
+        statusNow = new MenuItem("Status = Not Running ...");
+
+        showItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         exitItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
+        listeningTo.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
+        statusNow.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         URL url = getClass().getResource("/icons/tray_icon.png");
         ico = Toolkit.getDefaultToolkit().getImage(url);
-        trayIcon = new TrayIcon(ico, "Socketty Server", PopupMenu);
+        trayIcon = new TrayIcon(ico, "Socketty (Not Running)", PopupMenu);
         //adjust to default size as per system recommendation
         trayIcon.setImageAutoSize(true);
+        PopupMenu.add(statusNow);
+        PopupMenu.addSeparator();
         PopupMenu.add(showItem);
         PopupMenu.addSeparator();
         PopupMenu.add(exitItem);
@@ -597,6 +608,13 @@ public class ServerMain extends javax.swing.JFrame
                 {
                     //calling the execute method for thread creation
                     execute();
+                    if(SystemTray.isSupported())
+                    {
+                        trayIcon.setToolTip("Socketty (Running Port :: " + port + ")");
+                        statusNow.setLabel("Status :: Running ...");
+                        listeningTo.setLabel("Listening on Port :: " + port);
+                        PopupMenu.insert(listeningTo, 1);
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -671,6 +689,12 @@ public class ServerMain extends javax.swing.JFrame
             {
                 run.interrupt();
                 ss.close();
+                if(SystemTray.isSupported())
+                {
+                    trayIcon.setToolTip("Socketty (Not Running)");
+                    PopupMenu.remove(listeningTo);
+                    statusNow.setLabel("Status :: Not Running ...");
+                }
                 isReadyToClose = true;
                 portField.setEnabled(true);
                 loc_Ip_Port.setText(new IpAPI().loc_Ip());
@@ -777,6 +801,8 @@ public class ServerMain extends javax.swing.JFrame
     private PopupMenu PopupMenu;
     private MenuItem showItem;
     private MenuItem exitItem;
+    private MenuItem statusNow;
+    private MenuItem listeningTo;
     private Image ico;
     private TrayIcon trayIcon;
     // Variables declaration - do not modify//GEN-BEGIN:variables
