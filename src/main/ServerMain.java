@@ -503,7 +503,7 @@ public class ServerMain extends javax.swing.JFrame
         showItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
         exitItem = new MenuItem("Exit");
         exitItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
-        URL url = System.class.getResource("/icons/tray_icon.png");
+        URL url = getClass().getResource("/icons/tray_icon.png");
         ico = Toolkit.getDefaultToolkit().getImage(url);
         trayIcon = new TrayIcon(ico, "Socketty Server", PopupMenu);
         //adjust to default size as per system recommendation
@@ -702,6 +702,7 @@ public class ServerMain extends javax.swing.JFrame
         if(!SystemTray.isSupported())
         {
             ClosingTask();
+            SystemTray.remove(trayIcon);
         }
         if(SystemTray.isSupported())
         {
@@ -1018,18 +1019,21 @@ public class ServerMain extends javax.swing.JFrame
                     if(isReadyToClose == true)
                     {
                         logFooter();
+                        SystemTray.remove(trayIcon);
                         System.exit(0);
                     }
                 }
                 else if(ss.isClosed())
                 {
                     logFooter();
+                    SystemTray.remove(trayIcon);
                     System.exit(0);
                 }
             }
             else if(ss == null)
             {
                 logFooter();
+                SystemTray.remove(trayIcon);
                 System.exit(0);
             }
         }
