@@ -730,7 +730,27 @@ public class ServerMain extends javax.swing.JFrame
         }
         if(SystemTray.isSupported())
         {
-            this.setVisible(false);
+            String options[] = new String[]
+            {
+                "Hide", "Exit"
+            };
+            int response = JOptionPane.showOptionDialog(
+                    this,
+                    "Do you really wish to Exit or Just Hide ?",
+                    "Exit",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+            if(response == 0)
+            {
+                this.setVisible(false);
+            }
+            else if(response == 1)
+            {
+                ClosingTask();
+            }
         }
     }//GEN-LAST:event_formWindowClosing
 
