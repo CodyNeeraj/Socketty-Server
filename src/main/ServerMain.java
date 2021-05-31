@@ -119,8 +119,6 @@ public class ServerMain extends javax.swing.JFrame
         portField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        serverPass = new javax.swing.JLabel();
-        passField = new javax.swing.JTextField();
         activeUsers = new javax.swing.JComboBox<>();
         jSeparator1 = new javax.swing.JSeparator();
         public_Ip_Port = new javax.swing.JTextField();
@@ -158,7 +156,7 @@ public class ServerMain extends javax.swing.JFrame
         });
 
         jLabel1.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
-        jLabel1.setText("Select IP");
+        jLabel1.setText("Selected IP");
 
         portNumber.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
         portNumber.setText("Enter Port");
@@ -195,9 +193,6 @@ public class ServerMain extends javax.swing.JFrame
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("Configuration");
 
-        serverPass.setFont(SystemFontLoader.getSegoe_UIFont().deriveFont(0, 14f));
-        serverPass.setText("Password");
-
         activeUsers.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
 
         public_Ip_Port.setEditable(false);
@@ -209,14 +204,14 @@ public class ServerMain extends javax.swing.JFrame
         loc_Ip_Port.setText("Loading...");
         loc_Ip_Port.addAncestorListener(new javax.swing.event.AncestorListener()
         {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt)
             {
                 loc_Ip_PortAncestorAdded(evt);
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
-            {
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
             {
             }
         });
@@ -283,7 +278,7 @@ public class ServerMain extends javax.swing.JFrame
 
         jLabel8.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         jLabel8.setForeground(new java.awt.Color(0, 0, 255));
-        jLabel8.setText("Date-Time ::");
+        jLabel8.setText(" Date-Time ::");
 
         time_now.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         time_now.setForeground(new java.awt.Color(0, 0, 255));
@@ -382,26 +377,20 @@ public class ServerMain extends javax.swing.JFrame
                                 .add(0, 0, Short.MAX_VALUE)))
                         .add(0, 12, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(portNumber)
-                                    .add(serverPass))
-                                .add(24, 24, 24)
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                    .add(jLabel1)
+                                    .add(portNumber))
+                                .add(18, 18, 18)
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(layout.createSequentialGroup()
                                         .add(portField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                                         .add(jLabel3))
-                                    .add(passField)))
-                            .add(layout.createSequentialGroup()
-                                .add(jLabel1)
-                                .add(35, 35, 35)
-                                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(layout.createSequentialGroup()
-                                .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(mutexCheckbox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(mutexCheckbox))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, StartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -423,7 +412,7 @@ public class ServerMain extends javax.swing.JFrame
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
@@ -445,20 +434,16 @@ public class ServerMain extends javax.swing.JFrame
                     .add(layout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
                         .add(refreshBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(layout.createSequentialGroup()
                         .add(12, 12, 12)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(mutexCheckbox))
+                        .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel1)
-                            .add(layout.createSequentialGroup()
-                                .add(2, 2, 2)
-                                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(layout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(StartBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -466,16 +451,14 @@ public class ServerMain extends javax.swing.JFrame
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(portNumber)
                             .add(layout.createSequentialGroup()
                                 .add(2, 2, 2)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(portField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(jLabel3))))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(serverPass)
-                            .add(passField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                    .add(jLabel3)))
+                            .add(portNumber, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(mutexCheckbox))
                     .add(StopBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 279, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -896,12 +879,10 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JTextField loc_Ip_Port;
     private javax.swing.JMenuItem logging_info;
     private javax.swing.JCheckBox mutexCheckbox;
-    private javax.swing.JTextField passField;
     private javax.swing.JTextField portField;
     private javax.swing.JLabel portNumber;
     private javax.swing.JTextField public_Ip_Port;
     private javax.swing.JButton refreshBtn;
-    private javax.swing.JLabel serverPass;
     private javax.swing.JLabel serverStatus;
     private javax.swing.JLabel time_now;
     // End of variables declaration//GEN-END:variables
