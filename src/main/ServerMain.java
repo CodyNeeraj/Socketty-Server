@@ -16,6 +16,8 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
@@ -24,6 +26,9 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -31,7 +36,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import menubar.about_form;
 
 /*
@@ -69,6 +73,7 @@ public class ServerMain extends javax.swing.JFrame
     private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
     private File logDir = new File("logs");
     private File dataDir = new File("data");
+    private File config_file = new File("config.properties");
     private String logFileName = "Server_" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
     private File logFile = new File(logDir + File.separator + logFileName);
     // FileUtils.writeStringToFile(file, "String to append", true);
@@ -87,27 +92,28 @@ public class ServerMain extends javax.swing.JFrame
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(new FlatLightLaf());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            initComponents();
+            initComponentsNew();
+            this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
+            date_now.setText(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now()));
+            Timer timer = new Timer();
+            TimerTask task = new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    time_now.setText(DateTimeFormatter.ofPattern("hh:mm:ss a").format(LocalDateTime.now()));
+                }
+            };
+            timer.scheduleAtFixedRate(task, 1000, 1000);
+            CurrStatus.append("------------------------------------------------[Started]-------------------------------------------------\n");
+            dirVerifier();
         }
-        catch(UnsupportedLookAndFeelException ex)
+        catch(Exception ex)
         {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(0);
         }
-        initComponents();
-        initComponentsNew();
-        this.setIconImage(new ImageIcon(getClass().getResource("/icons/main_icon.png")).getImage());
-        date_now.setText(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now()));
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                time_now.setText(DateTimeFormatter.ofPattern("hh:mm:ss a").format(LocalDateTime.now()));
-            }
-        };
-        timer.scheduleAtFixedRate(task, 1000, 1000);
-        CurrStatus.append("------------------------------------------------[Started]-------------------------------------------------\n");
-        dirVerifier();
     }
 
     /**
@@ -817,6 +823,7 @@ public class ServerMain extends javax.swing.JFrame
         });
     }
 
+    private ResourceBundle propertiesBundle;
     private SystemTray SystemTray;
     private PopupMenu PopupMenu;
     private MenuItem showItem;
@@ -860,37 +867,6 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JLabel serverStatus;
     private javax.swing.JLabel time_now;
     // End of variables declaration//GEN-END:variables
-
-    private void DisplayTraypanel()
-    {
-//        final PopupMenu popup = new PopupMenu();
-//        final TrayIcon trayIcon = new TrayIcon(createImage("images/bulb.gif", "tray icon"));
-//        final SystemTray systemtray = SystemTray.getSystemTray();
-//        CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
-//        CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
-//        Menu displayMenu = new Menu("Display");
-//        MenuItem errorItem = new MenuItem("Error");
-//        MenuItem warningItem = new MenuItem("Warning");
-//        MenuItem infoItem = new MenuItem("Info");
-//        MenuItem noneItem = new MenuItem("None");
-//        MenuItem exitItem = new MenuItem("Exit");
-//        MenuItem aboutItem = new MenuItem("About");
-//
-//        //Add components to popup menu
-//        popup.add(aboutItem);
-//        popup.addSeparator();
-//        popup.add(cb1);
-//        popup.add(cb2);
-//        popup.addSeparator();
-//        popup.add(displayMenu);
-//        displayMenu.add(errorItem);
-//        displayMenu.add(warningItem);
-//        displayMenu.add(infoItem);
-//        displayMenu.add(noneItem);
-//        popup.add(exitItem);
-//
-//        trayIcon.setPopupMenu(popup);
-    }
 
     private void dirVerifier()
     {
@@ -951,6 +927,24 @@ public class ServerMain extends javax.swing.JFrame
                 logFileWriter.close();
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
             }
+
+            // System.out.println(null);
+            if(config_file.exists())
+            {
+                propertiesBundle = new PropertyResourceBundle(new FileInputStream(config_file));
+            }
+            if(!config_file.exists())
+            {
+                config_file.createNewFile();
+                Properties config = new Properties();
+                config.put("On_Exit_Action", "");
+                config.put("Last_known_port", "");
+                try(FileOutputStream stream = new FileOutputStream(config_file))
+                {
+                    config.store(stream, "DON'T TRY TO MODIFY THESE FIELDS");
+                }
+                propertiesBundle = new PropertyResourceBundle(new FileInputStream(config_file));
+            }
             /**
              * Code for making new folder named data (will cause the client to freeze if not
              * properly used, as all the data from each other will reside here only !!
@@ -993,8 +987,7 @@ public class ServerMain extends javax.swing.JFrame
         }
         catch(IOException ex)
         {
-            Logger.getLogger(ServerMain.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
