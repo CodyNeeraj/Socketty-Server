@@ -31,6 +31,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -141,6 +142,9 @@ public class ServerMain extends javax.swing.JFrame
         info_menu = new javax.swing.JMenu();
         logging_info = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        onCloseMenu = new javax.swing.JMenu();
+        menuHide = new javax.swing.JCheckBoxMenuItem();
+        menuExit = new javax.swing.JCheckBoxMenuItem();
         aboutMenu = new javax.swing.JMenuItem();
         Exit = new javax.swing.JMenuItem();
 
@@ -314,6 +318,16 @@ public class ServerMain extends javax.swing.JFrame
         jMenu1.add(info_menu);
         jMenu1.add(jSeparator2);
 
+        onCloseMenu.setText("On Close");
+
+        menuHide.setText("Hide");
+        onCloseMenu.add(menuHide);
+
+        menuExit.setText("Exit");
+        onCloseMenu.add(menuExit);
+
+        jMenu1.add(onCloseMenu);
+
         aboutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.SHIFT_MASK));
         aboutMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/about_menu.png"))); // NOI18N
         aboutMenu.setText("About");
@@ -476,6 +490,9 @@ public class ServerMain extends javax.swing.JFrame
 
     private void initComponentsNew()
     {
+        ButtonGroup menugroup = new ButtonGroup();
+        menugroup.add(menuHide);
+        menugroup.add(menuExit);
         SystemTray = SystemTray.getSystemTray();
         PopupMenu = new PopupMenu();
         showItem = new MenuItem("Socketty");
@@ -878,7 +895,10 @@ public class ServerMain extends javax.swing.JFrame
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField loc_Ip_Port;
     private javax.swing.JMenuItem logging_info;
+    private javax.swing.JCheckBoxMenuItem menuExit;
+    private javax.swing.JCheckBoxMenuItem menuHide;
     private javax.swing.JCheckBox mutexCheckbox;
+    private javax.swing.JMenu onCloseMenu;
     private javax.swing.JTextField portField;
     private javax.swing.JLabel portNumber;
     private javax.swing.JTextField public_Ip_Port;
