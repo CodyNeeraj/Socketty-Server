@@ -27,8 +27,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -67,19 +65,7 @@ import menubar.about_form;
  */
 public class ServerMain extends javax.swing.JFrame
 {
-
     private static final long serialVersionUID = 5455364458445364L;
-    private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
-    private File logDir = new File("logs");
-    private File dataDir = new File("data");
-    private File config_file = new File("config.properties");
-    private String logFileName = "Server_" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
-    private File logFile = new File(logDir + File.separator + logFileName);
-    // FileUtils.writeStringToFile(file, "String to append", true);
-    private BufferedWriter logFileWriter;
-    private ServerSocket ss;
-    private Thread run;
     private int port = 0;
     private boolean isReadyToClose;
     private boolean isAlreadyLoaded = false;
@@ -538,6 +524,10 @@ public class ServerMain extends javax.swing.JFrame
         {
             exitItemActionPerformed(evt);
         });
+        trayIcon.addActionListener((ActionEvent evt) ->
+        {
+            trayIconActionPerformed(evt);
+        });
         try
         {
             SystemTray.add(trayIcon);
@@ -729,34 +719,65 @@ public class ServerMain extends javax.swing.JFrame
 
     private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
     {//GEN-HEADEREND:event_formWindowClosing
-        if(!SystemTray.isSupported())
+        try
         {
-            ClosingTask();
-            SystemTray.remove(trayIcon);
-        }
-        if(SystemTray.isSupported())
-        {
-            String options[] = new String[]
-            {
-                "Hide", "Exit"
-            };
-            int response = JOptionPane.showOptionDialog(
-                    this,
-                    "Do you really wish to Exit or Just Hide ?",
-                    "Exit",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]);
-            if(response == 0)
-            {
-                this.setVisible(false);
-            }
-            else if(response == 1)
+            if(!SystemTray.isSupported())
             {
                 ClosingTask();
+                SystemTray.remove(trayIcon);
             }
+            if(SystemTray.isSupported())
+            {
+                propertiesBundle.load(new FileInputStream(config_file));
+                String exitOption = propertiesBundle.getProperty("On_Exit_Action");
+                if(exitOption.equals("Hide"))
+                {
+                    this.setVisible(false);
+                }
+                if(exitOption.equals("Exit"))
+                {
+                    ClosingTask();
+                }
+                if(!exitOption.equals("Hide") && !exitOption.equals("Exit"))
+                {
+                    String options[] = new String[]
+                    {
+                        "Hide", "Exit"
+                    };
+                    int response = JOptionPane.showOptionDialog(
+                            this,
+                            "Do you really wish to Exit or Just Hide ?",
+                            "Exit",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
+
+                    if(response == 0)
+                    {
+                        properties.replace("On_Exit_Action", options[response]);
+                        try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                        {
+                            properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                        }
+                        this.setVisible(false);
+                    }
+                    if(response == 1)
+                    {
+                        properties.replace("On_Exit_Action", options[response]);
+                        try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                        {
+                            properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                        }
+                        ClosingTask();
+                    }
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -809,6 +830,12 @@ public class ServerMain extends javax.swing.JFrame
         ClosingTask();
     }
 
+    private void trayIconActionPerformed(ActionEvent evt)
+    {
+        this.setVisible(true);
+        this.revalidate();
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -823,7 +850,6 @@ public class ServerMain extends javax.swing.JFrame
         });
     }
 
-    private ResourceBundle propertiesBundle;
     private SystemTray SystemTray;
     private PopupMenu PopupMenu;
     private MenuItem showItem;
@@ -832,6 +858,18 @@ public class ServerMain extends javax.swing.JFrame
     private MenuItem listeningTo;
     private Image ico;
     private TrayIcon trayIcon;
+    private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private DateTimeFormatter forlog = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
+    private File logDir = new File("logs");
+    private File dataDir = new File("data");
+    private File config_file = new File("config.properties");
+    private String logFileName = "Server_" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
+    private File logFile = new File(logDir + File.separator + logFileName);
+    private BufferedWriter logFileWriter;
+    private ServerSocket ss;
+    private Thread run;
+    private Properties properties;
+    private static Properties propertiesBundle;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
     private javax.swing.JMenuItem Exit;
@@ -931,19 +969,21 @@ public class ServerMain extends javax.swing.JFrame
             // System.out.println(null);
             if(config_file.exists())
             {
-                propertiesBundle = new PropertyResourceBundle(new FileInputStream(config_file));
+                properties = new Properties();
+                propertiesBundle = new Properties();
             }
             if(!config_file.exists())
             {
                 config_file.createNewFile();
-                Properties config = new Properties();
-                config.put("On_Exit_Action", "");
-                config.put("Last_known_port", "");
-                try(FileOutputStream stream = new FileOutputStream(config_file))
+                properties = new Properties();
+                properties.put("On_Exit_Action", "");
+                properties.put("Last_known_port", "");
+                try(FileOutputStream stream = new FileOutputStream(config_file, false))
                 {
-                    config.store(stream, "DON'T TRY TO MODIFY THESE FIELDS");
+                    //AN extra newLine feed char is always reserved if you want custom Input from Keyboard
+                    properties.store(stream, "DON'T TRY TO MODIFY THESE FIELDS");
                 }
-                propertiesBundle = new PropertyResourceBundle(new FileInputStream(config_file));
+                propertiesBundle = new Properties();
             }
             /**
              * Code for making new folder named data (will cause the client to freeze if not
