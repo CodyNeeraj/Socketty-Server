@@ -181,13 +181,6 @@ public class ServerMain extends javax.swing.JFrame
         jTextField1.setToolTipText("Default");
 
         portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
-        portField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                portFieldActionPerformed(evt);
-            }
-        });
 
         jLabel3.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 12f));
         jLabel3.setText("(10-65535)");
@@ -321,9 +314,25 @@ public class ServerMain extends javax.swing.JFrame
         onCloseMenu.setText("On Close");
 
         menuHide.setText("Hide");
+        menuHide.setActionCommand("Hideme");
+        menuHide.addItemListener(new java.awt.event.ItemListener()
+        {
+            public void itemStateChanged(java.awt.event.ItemEvent evt)
+            {
+                menuHideItemStateChanged(evt);
+            }
+        });
         onCloseMenu.add(menuHide);
 
         menuExit.setText("Exit");
+        menuExit.setActionCommand("Exitme");
+        menuExit.addItemListener(new java.awt.event.ItemListener()
+        {
+            public void itemStateChanged(java.awt.event.ItemEvent evt)
+            {
+                menuExitItemStateChanged(evt);
+            }
+        });
         onCloseMenu.add(menuExit);
 
         jMenu1.add(onCloseMenu);
@@ -490,7 +499,7 @@ public class ServerMain extends javax.swing.JFrame
 
     private void initComponentsNew()
     {
-        ButtonGroup menugroup = new ButtonGroup();
+        menugroup = new ButtonGroup();
         menugroup.add(menuHide);
         menugroup.add(menuExit);
         SystemTray = SystemTray.getSystemTray();
@@ -757,7 +766,7 @@ public class ServerMain extends javax.swing.JFrame
                     if(response == 0)
                     {
                         properties.replace("On_Exit_Action", options[response]);
-                        try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                        try(FileOutputStream writer = new FileOutputStream(config_file))
                         {
                             properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
                         }
@@ -766,7 +775,7 @@ public class ServerMain extends javax.swing.JFrame
                     if(response == 1)
                     {
                         properties.replace("On_Exit_Action", options[response]);
-                        try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                        try(FileOutputStream writer = new FileOutputStream(config_file))
                         {
                             properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
                         }
@@ -813,10 +822,67 @@ public class ServerMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_mutexCheckboxItemStateChanged
 
-    private void portFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_portFieldActionPerformed
-    {//GEN-HEADEREND:event_portFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_portFieldActionPerformed
+    private void menuHideItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_menuHideItemStateChanged
+    {//GEN-HEADEREND:event_menuHideItemStateChanged
+        try
+        {
+            String command = menugroup.getSelection().getActionCommand();
+            if(command != null)
+            {
+                if(command.equals("Hideme"))
+                {
+                    properties.replace("On_Exit_Action", "Hide");
+                    try(FileOutputStream writer = new FileOutputStream(config_file))
+                    {
+                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                    }
+                }
+                else if(command.equals("Exitme"))
+                {
+                    properties.replace("On_Exit_Action", "Exit");
+                    try(FileOutputStream writer = new FileOutputStream(config_file))
+                    {
+                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                    }
+                }
+            }
+        }
+        catch(IOException | NullPointerException e)
+        {
+            System.out.println("Nothing Selected !!");
+        }
+    }//GEN-LAST:event_menuHideItemStateChanged
+
+    private void menuExitItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_menuExitItemStateChanged
+    {//GEN-HEADEREND:event_menuExitItemStateChanged
+        try
+        {
+            String command = menugroup.getSelection().getActionCommand();
+            if(command != null)
+            {
+                if(command.equals("Hideme"))
+                {
+                    properties.replace("On_Exit_Action", "Hide");
+                    try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                    {
+                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                    }
+                }
+                else if(command.equals("Exitme"))
+                {
+                    properties.replace("On_Exit_Action", "Exit");
+                    try(FileOutputStream writer = new FileOutputStream(config_file, false))
+                    {
+                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
+                    }
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println("Nothing Selected !!");
+        }
+    }//GEN-LAST:event_menuExitItemStateChanged
 
     private void showItemActionPerformed(ActionEvent evt)
     {
@@ -856,6 +922,7 @@ public class ServerMain extends javax.swing.JFrame
     private MenuItem exitItem;
     private MenuItem statusNow;
     private MenuItem listeningTo;
+    private ButtonGroup menugroup;
     private Image ico;
     private TrayIcon trayIcon;
     private DateTimeFormatter forStamping = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -979,7 +1046,7 @@ public class ServerMain extends javax.swing.JFrame
                 properties = new Properties();
                 properties.put("On_Exit_Action", "");
                 properties.put("Last_known_port", "");
-                try(FileOutputStream stream = new FileOutputStream(config_file, false))
+                try(FileOutputStream stream = new FileOutputStream(config_file))
                 {
                     //AN extra newLine feed char is always reserved if you want custom Input from Keyboard
                     properties.store(stream, "DON'T TRY TO MODIFY THESE FIELDS");
