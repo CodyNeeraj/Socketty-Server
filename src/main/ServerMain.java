@@ -1019,7 +1019,6 @@ public class ServerMain extends javax.swing.JFrame
                 CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
             }
 
-            // System.out.println(null);
             if(config_file.exists())
             {
                 ins = new FileInputStream(config_file);
