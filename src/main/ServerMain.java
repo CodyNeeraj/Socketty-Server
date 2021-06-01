@@ -181,6 +181,19 @@ public class ServerMain extends javax.swing.JFrame
         jTextField1.setToolTipText("Default");
 
         portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
+        portField.addAncestorListener(new javax.swing.event.AncestorListener()
+        {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt)
+            {
+                portFieldAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt)
+            {
+            }
+        });
 
         jLabel3.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 12f));
         jLabel3.setText("(10-65535)");
@@ -315,13 +328,6 @@ public class ServerMain extends javax.swing.JFrame
 
         menuHide.setText("Hide");
         menuHide.setActionCommand("Hideme");
-        menuHide.addItemListener(new java.awt.event.ItemListener()
-        {
-            public void itemStateChanged(java.awt.event.ItemEvent evt)
-            {
-                menuHideItemStateChanged(evt);
-            }
-        });
         onCloseMenu.add(menuHide);
 
         menuExit.setText("Exit");
@@ -694,6 +700,11 @@ public class ServerMain extends javax.swing.JFrame
             {
                 run.interrupt();
                 ss.close();
+                out = new FileOutputStream(config_file);
+                properties.replace("Last_known_port", String.valueOf(port));
+                properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                out.close();
+
                 if(SystemTray.isSupported())
                 {
                     trayIcon.setToolTip("Socketty (Not Running)");
@@ -737,8 +748,11 @@ public class ServerMain extends javax.swing.JFrame
             }
             if(SystemTray.isSupported())
             {
-                propertiesBundle.load(new FileInputStream(config_file));
-                String exitOption = propertiesBundle.getProperty("On_Exit_Action");
+                ins = new FileInputStream(config_file);
+                properties.load(ins);
+                String exitOption = properties.getProperty("On_Exit_Action");
+                ins.close();
+                System.out.println(exitOption);
                 if(exitOption.equals("Hide"))
                 {
                     this.setVisible(false);
@@ -765,20 +779,18 @@ public class ServerMain extends javax.swing.JFrame
 
                     if(response == 0)
                     {
+                        out = new FileOutputStream(config_file, false);
                         properties.replace("On_Exit_Action", options[response]);
-                        try(FileOutputStream writer = new FileOutputStream(config_file))
-                        {
-                            properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                        }
+                        properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                        out.close();
                         this.setVisible(false);
                     }
                     if(response == 1)
                     {
+                        out = new FileOutputStream(config_file, false);
                         properties.replace("On_Exit_Action", options[response]);
-                        try(FileOutputStream writer = new FileOutputStream(config_file))
-                        {
-                            properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                        }
+                        properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                        out.close();
                         ClosingTask();
                     }
                 }
@@ -822,37 +834,6 @@ public class ServerMain extends javax.swing.JFrame
         }
     }//GEN-LAST:event_mutexCheckboxItemStateChanged
 
-    private void menuHideItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_menuHideItemStateChanged
-    {//GEN-HEADEREND:event_menuHideItemStateChanged
-        try
-        {
-            String command = menugroup.getSelection().getActionCommand();
-            if(command != null)
-            {
-                if(command.equals("Hideme"))
-                {
-                    properties.replace("On_Exit_Action", "Hide");
-                    try(FileOutputStream writer = new FileOutputStream(config_file))
-                    {
-                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                    }
-                }
-                else if(command.equals("Exitme"))
-                {
-                    properties.replace("On_Exit_Action", "Exit");
-                    try(FileOutputStream writer = new FileOutputStream(config_file))
-                    {
-                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                    }
-                }
-            }
-        }
-        catch(IOException | NullPointerException e)
-        {
-            System.out.println("Nothing Selected !!");
-        }
-    }//GEN-LAST:event_menuHideItemStateChanged
-
     private void menuExitItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_menuExitItemStateChanged
     {//GEN-HEADEREND:event_menuExitItemStateChanged
         try
@@ -862,19 +843,17 @@ public class ServerMain extends javax.swing.JFrame
             {
                 if(command.equals("Hideme"))
                 {
+                    out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Hide");
-                    try(FileOutputStream writer = new FileOutputStream(config_file, false))
-                    {
-                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                    }
+                    properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                    out.close();
                 }
                 else if(command.equals("Exitme"))
                 {
+                    out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Exit");
-                    try(FileOutputStream writer = new FileOutputStream(config_file, false))
-                    {
-                        properties.store(writer, "DON'T TRY TO MODIFY THESE FIELDS");
-                    }
+                    properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                    out.close();
                 }
             }
         }
@@ -883,6 +862,11 @@ public class ServerMain extends javax.swing.JFrame
             System.out.println("Nothing Selected !!");
         }
     }//GEN-LAST:event_menuExitItemStateChanged
+
+    private void portFieldAncestorAdded(javax.swing.event.AncestorEvent evt)//GEN-FIRST:event_portFieldAncestorAdded
+    {//GEN-HEADEREND:event_portFieldAncestorAdded
+        portField.setText(properties.getProperty("Last_known_port"));
+    }//GEN-LAST:event_portFieldAncestorAdded
 
     private void showItemActionPerformed(ActionEvent evt)
     {
@@ -933,10 +917,11 @@ public class ServerMain extends javax.swing.JFrame
     private String logFileName = "Server_" + forlog.format(LocalDateTime.now()) + "_LOG.txt";
     private File logFile = new File(logDir + File.separator + logFileName);
     private BufferedWriter logFileWriter;
+    private FileOutputStream out;
+    private FileInputStream ins;
     private ServerSocket ss;
     private Thread run;
     private Properties properties;
-    private static Properties propertiesBundle;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
     private javax.swing.JMenuItem Exit;
@@ -1037,21 +1022,25 @@ public class ServerMain extends javax.swing.JFrame
             // System.out.println(null);
             if(config_file.exists())
             {
+                ins = new FileInputStream(config_file);
                 properties = new Properties();
-                propertiesBundle = new Properties();
+                properties.load(ins);
+                ins.close();
             }
             if(!config_file.exists())
             {
                 config_file.createNewFile();
+                out = new FileOutputStream(config_file);
                 properties = new Properties();
+                //AN extra newLine feed char is always reserved if you want custom Input from Keyboard
                 properties.put("On_Exit_Action", "");
                 properties.put("Last_known_port", "");
-                try(FileOutputStream stream = new FileOutputStream(config_file))
-                {
-                    //AN extra newLine feed char is always reserved if you want custom Input from Keyboard
-                    properties.store(stream, "DON'T TRY TO MODIFY THESE FIELDS");
-                }
-                propertiesBundle = new Properties();
+                properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
+                out.close();
+
+                ins = new FileInputStream(config_file);
+                properties.load(ins);
+                ins.close();
             }
             /**
              * Code for making new folder named data (will cause the client to freeze if not
