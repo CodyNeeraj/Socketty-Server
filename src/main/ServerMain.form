@@ -322,7 +322,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="portField">
       <Properties>
-        <Property name="toolTipText" type="java.lang.String" value="Possibility of non-availability of specified port\u005cn as being used by some another application at the same time , You are requested \u005cn to change it to some other value \u005cn (The common unsused values are from 1000 - 65535 )" containsInvalidXMLChars="true"/>
+        <Property name="toolTipText" type="java.lang.String" value="Enter only integers between given range"/>
       </Properties>
       <Events>
         <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="portFieldAncestorAdded"/>

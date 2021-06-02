@@ -180,7 +180,7 @@ public class ServerMain extends javax.swing.JFrame
         jTextField1.setText("Localhost (127.0.0.1)");
         jTextField1.setToolTipText("Default");
 
-        portField.setToolTipText("Possibility of non-availability of specified port\\n as being used by some another application at the same time , You are requested \\n to change it to some other value \\n (The common unsused values are from 1000 - 65535 )");
+        portField.setToolTipText("Enter only integers between given range");
         portField.addAncestorListener(new javax.swing.event.AncestorListener()
         {
             public void ancestorMoved(javax.swing.event.AncestorEvent evt)
