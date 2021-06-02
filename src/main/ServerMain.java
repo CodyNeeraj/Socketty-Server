@@ -539,10 +539,23 @@ public class ServerMain extends javax.swing.JFrame
         {
             exitItemActionPerformed(evt);
         });
+
         trayIcon.addActionListener((ActionEvent evt) ->
         {
             trayIconActionPerformed(evt);
         });
+
+        verticalScrollBarMaximumValue = jScrollPane1.getVerticalScrollBar().getMaximum();
+        jScrollPane1.getVerticalScrollBar().addAdjustmentListener(e ->
+        {
+            if((verticalScrollBarMaximumValue - e.getAdjustable().getMaximum()) == 0)
+            {
+                return;
+            }
+            e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+            verticalScrollBarMaximumValue = jScrollPane1.getVerticalScrollBar().getMaximum();
+        });
+
         try
         {
             SystemTray.add(trayIcon);
@@ -921,6 +934,7 @@ public class ServerMain extends javax.swing.JFrame
     private FileInputStream ins;
     private ServerSocket ss;
     private Thread run;
+    private int verticalScrollBarMaximumValue;
     private Properties properties;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea CurrStatus;
