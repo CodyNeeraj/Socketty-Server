@@ -671,6 +671,19 @@ public class ServerMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
         if(isAlreadyLoaded == false)
         {
+            loc_Ip_Port.setText(new IpAPI().loc_Ip());
+            IpAPI obj = new IpAPI();
+            obj.start();
+            String ip = obj.pub_Ip();
+            if(ip.equalsIgnoreCase("Offline"))
+            {
+                public_Ip_Port.setText("Offline");
+            }
+            else
+            {
+                public_Ip_Port.setText(ip);
+            }
+            isAlreadyLoaded = true;
             try
             {
                 if(SystemTray.isSupported())
@@ -698,20 +711,7 @@ public class ServerMain extends javax.swing.JFrame
             {
                 Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
             }
-            loc_Ip_Port.setText(new IpAPI().loc_Ip());
-            IpAPI obj = new IpAPI();
-            obj.start();
-            String ip = obj.pub_Ip();
-            if(ip.equalsIgnoreCase("Offline"))
-            {
-                public_Ip_Port.setText("Offline");
-            }
-            else
-            {
-                public_Ip_Port.setText(ip);
-            }
         }
-        isAlreadyLoaded = true;
     }//GEN-LAST:event_loc_Ip_PortAncestorAdded
 
     private void StopBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_StopBtnActionPerformed
