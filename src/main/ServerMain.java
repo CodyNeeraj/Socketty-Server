@@ -671,6 +671,33 @@ public class ServerMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_loc_Ip_PortAncestorAdded
         if(isAlreadyLoaded == false)
         {
+            try
+            {
+                if(SystemTray.isSupported())
+                {
+                    ins = new FileInputStream(config_file);
+                    properties.load(ins);
+                    String exitOption = properties.getProperty("On_Exit_Action");
+                    ins.close();
+                    System.out.println(exitOption);
+                    if(exitOption.equals("Hide"))
+                    {
+                        menuHide.setSelected(true);
+                    }
+                    if(exitOption.equals("Exit"))
+                    {
+                        menuExit.setSelected(true);
+                    }
+                    if(!exitOption.equals("Hide") && !exitOption.equals("Exit"))
+                    {
+                        return;
+                    }
+                }
+            }
+            catch(IOException e)
+            {
+                Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, e);
+            }
             loc_Ip_Port.setText(new IpAPI().loc_Ip());
             IpAPI obj = new IpAPI();
             obj.start();
@@ -858,7 +885,6 @@ public class ServerMain extends javax.swing.JFrame
             {
                 if(command.equals("Hideme"))
                 {
-                    menuHide.setSelected(true);
                     out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Hide");
                     properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
@@ -866,7 +892,6 @@ public class ServerMain extends javax.swing.JFrame
                 }
                 else if(command.equals("Exitme"))
                 {
-                    menuExit.setSelected(true);
                     out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Exit");
                     properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
