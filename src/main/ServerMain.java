@@ -276,7 +276,7 @@ public class ServerMain extends javax.swing.JFrame
 
         CurrStatus.setEditable(false);
         CurrStatus.setColumns(20);
-        CurrStatus.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
+        CurrStatus.setFont(SystemFontLoader.getSegoeUI_SymbolFont().deriveFont(0, 11f));
         CurrStatus.setLineWrap(true);
         CurrStatus.setRows(5);
         CurrStatus.setTabSize(4);
@@ -1023,13 +1023,13 @@ public class ServerMain extends javax.swing.JFrame
             CurrStatus.append("[" + forStamping.format(LocalDateTime.now()) + "]  Checking the required directories exists ??...");
             if(logDir.exists())
             {
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR Logs/ Exists !");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory /logs already exists !");
                 File temp[] = logDir.listFiles();
                 if(temp.length > 0)
                 {
                     if(logFile.exists())
                     {
-                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file exists ...!");
+                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's Log file already exists ...!");
                     }
                     //can execute if todays file isn't present among others
                     else if(!logFile.exists())
@@ -1038,28 +1038,28 @@ public class ServerMain extends javax.swing.JFrame
                         logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
                         logFileWriter.write(default_header);
                         logFileWriter.close();
-                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+                        CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's Log file creation: SUCCESS");
                     }
                 }
                 if(temp.length == 0)
                 {
-                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  No special named file[s] found in DIR /logs");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  No special named file[s] found in directory /logs");
                     logFile.createNewFile();
                     logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
                     logFileWriter.write(default_header);
                     logFileWriter.close();
-                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's Log file creation: SUCCESS");
                 }
             }
             if(!logDir.exists())
             {
                 logDir.mkdir();
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR logs/ created Successfuly");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory /logs creation: SUCCESS");
                 logFile.createNewFile();
                 logFileWriter = new BufferedWriter(new FileWriter(logFile, true));
                 logFileWriter.write(default_header);
                 logFileWriter.close();
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's named file created Successfully ...!");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Today's Log file creation: SUCCESS");
             }
 
             if(config_file.exists())
@@ -1090,8 +1090,8 @@ public class ServerMain extends javax.swing.JFrame
              */
             if(dataDir.exists())
             {
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ already exists ..!");
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking is the DIR data/ empty ..? ");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory /data already exists ..!");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Checking if the Directory /data empty ? ");
                 /**
                  * This above method deletes the old files in the directory named Data(if exists) in
                  * the Project's root path or AT the base directory of Main Executable file in a
@@ -1101,12 +1101,12 @@ public class ServerMain extends javax.swing.JFrame
                 File f[] = dataDir.listFiles();
                 if(f.length == 0)
                 {
-                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ was already clean ...!");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory /data was already clean ...!");
                 }
                 else if(f.length > 0)
                 {
-                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Detected " + f.length + " files in DIR data/");
-                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deleting " + f.length + " files.... in DIR data/");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Detected " + f.length + " files in directory /data");
+                    CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Deleting " + f.length + " files.... in directory /data");
                     for(File fs : dataDir.listFiles())
                     {
                         fs.delete();
@@ -1116,11 +1116,11 @@ public class ServerMain extends javax.swing.JFrame
             }
             if(!dataDir.exists())
             {
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  DIR data/ not Exists ...!!");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory /data not Exists ...!!");
                 dataDir.mkdir();//Execute the above object
                 //Failure of creation of above folder in the root path can cause
                 //null pointer exception -------!!!
-                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dataDir.getPath() + " Created Succesfully");
+                CurrStatus.append("\n[" + forStamping.format(LocalDateTime.now()) + "]  Directory named " + dataDir.getPath() + " creation: SUCCESS");
 
             }
         }
