@@ -266,11 +266,13 @@ public class ServerMain extends javax.swing.JFrame
             }
         });
 
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane1.setAutoscrolls(true);
         jScrollPane1.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
+        jScrollPane1.setOpaque(false);
 
         CurrStatus.setEditable(false);
         CurrStatus.setColumns(20);
@@ -515,10 +517,10 @@ public class ServerMain extends javax.swing.JFrame
         listeningTo = new MenuItem("");
         statusNow = new MenuItem("Status = Not Running ...");
 
-        showItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
-        exitItem.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
-        listeningTo.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
-        statusNow.setFont(SystemFontLoader.getMicrosoft_SS_Font().deriveFont(0, 11f));
+        showItem.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 11f));
+        exitItem.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 11f));
+        listeningTo.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 11f));
+        statusNow.setFont(SystemFontLoader.getSegoe_UI_SemiBoldFont().deriveFont(0, 11f));
         URL url = getClass().getResource("/icons/tray_icon.png");
         ico = Toolkit.getDefaultToolkit().getImage(url);
         trayIcon = new TrayIcon(ico, "Socketty (Not Running)", PopupMenu);
@@ -856,6 +858,7 @@ public class ServerMain extends javax.swing.JFrame
             {
                 if(command.equals("Hideme"))
                 {
+                    menuHide.setSelected(true);
                     out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Hide");
                     properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
@@ -863,6 +866,7 @@ public class ServerMain extends javax.swing.JFrame
                 }
                 else if(command.equals("Exitme"))
                 {
+                    menuExit.setSelected(true);
                     out = new FileOutputStream(config_file, false);
                     properties.replace("On_Exit_Action", "Exit");
                     properties.store(out, "DON'T TRY TO MODIFY THESE FIELDS");
