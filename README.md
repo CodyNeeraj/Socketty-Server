@@ -8,9 +8,9 @@
 </p>
 
 > ###  *Socketty, a CCS (Centralised-Chat-Server) Application built using Java :computer: :satellite:*
-*Socketty* is a program mainly built to function as a Central Administrative Server utility to connect with using (*[ClientEX](https://github.com/CodyNeeraj/Socketty-ClientEX/blob/main/README.md)*), and to communicate with each other ClientEX Hosts on the bare Internet/Networking architecture !!!
+*Socketty* is a program mainly built to function as a Central Administrative Server utility to connect with using (*[ClientEX](https://github.com/CodyNeeraj/Socketty-ClientEX)*), and to communicate with each other ClientEX Hosts on the bare Internet/Networking architecture !!!
 
-***This software is a bare server application and a Client application is required to connect to it so, For more info regarding the client software refer this url [ClientEX](https://github.com/CodyNeeraj/Socketty-ClientEX/blob/main/README.md)***
+***This software is a bare server application and a Client application is required to connect to it so, For more info regarding the client software refer this url [ClientEX](https://github.com/CodyNeeraj/Socketty-ClientEX)***
 ## Navigation :
  - [How to's](#how-tos)
  - [Working](#understanding-code-logic-implementation)
