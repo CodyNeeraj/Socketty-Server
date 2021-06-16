@@ -24,8 +24,10 @@
 
  
 ## User Interface 
-**1. Main Screen**<br>
-![screenshot](https://github.com/CodyNeeraj/Hotspot_Utility/blob/master/images/main_screen.png?raw=true "Main Screen")
+**1. Main Screen (Running Mode)**<br><br>
+![serverRunningNew](https://user-images.githubusercontent.com/60183278/122185997-35117c80-ceab-11eb-9db2-c9e363c20665.png) <br><br>
+**2. Main Screen (Stopped Mode)**<br><br>
+![server_mainScreen](https://user-images.githubusercontent.com/60183278/122185987-32af2280-ceab-11eb-9467-f41579575710.png)
 
 > *Other working is in the program itself ;) !!*
 
@@ -41,6 +43,8 @@ So this is all about how the data is being sent on the object output stream by s
  - Automatic Hide/Show console written using JAVA properties.
  - A Local personal chat server for anonymous discussions.
  - Highly optimised for long term usage.
+ - No need to install additional dependencies.
+ - Direct deployment Workflow.
  - Rest will made public soon :blush:
 ## Development Requirements
 - Must Ensure to have a JDK installed in your Operating System Version *(>=1.8) any Vendor* 
@@ -56,8 +60,42 @@ This software is licensed under MIT License any Commercial use can't be done wit
   - Windows, Mac and Linux for both x32 and x64 bit.
   - Internet Required if you want to connect outside your Network.
   - Specified port must be unfiltered for the above application too.
-  - Java  (Minimum version 1.8 must be installed, **only for development**)
+  - [Java](https://adoptopenjdk.net/?variant=openjdk16&jvmVariant=hotspot "JDK download")  (Minimum version 16 must be installed, **only for development**)
+   
+  ### Compile/Build our own directly from source !
+  *ABOVE TUTORIAL IS FOR WINDOWS ONLY !*
+  1. Clone this Repo to local
+  ```bash
+  git clone https://github.com/CodyNeeraj/Socketty-Server.git
+  ```
+  2. If [ANT](https://ant.apache.org/) Installed somewhere in your system, then got the root of repo and do
+  ```bash
+  ant -buildfile build.xml
+  ```
+3.  If above ANT not installed, you then required to have atleast Java 16 installed in your system and then do the following
 
+  -- **(For checking JDK is in path of Env. ?)**
+  ```bash
+  java -version
+  ```
+*  Fetching list of all the java files inside all sub-directories and copying them inside a file named details.txt
+```bash
+dir /s /b *.java > details.txt
+```
+* Compiling all the files captured in the above details.txt.
+```bash
+mkdir output
+javac -cp libs/* -d output @details.txt
+```
+* Making A jar file out of it now, take all the packages of *.classes and take the fonts and icons folder then zip all the files now with a name of *codyneeraj_Server.jar* and then run
+```bash
+ jar uvfe codyneeraj_Server.jar main.ServerMain
+```
+* Now run the jar executable using double clicking or (for verbosing) using cmd
+```bash
+ java -cp "codyneeraj_Server.jar;libs\*" main.ServerMain
+```
+Native Packing Tutorial COMING SOON !!
 ## License
 Original Developer- [Neeraj](https://github.com/CodyNeeraj)
 > **Project's License  > [MIT's License](https://opensource.org/licenses/MIT)** MIT ©
@@ -72,4 +110,3 @@ Pointing to github downloads section
 
  ## Feedback
  - Your feedback is important to me so please give a feedback.
-
