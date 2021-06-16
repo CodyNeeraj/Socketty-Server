@@ -84,7 +84,7 @@ dir /s /b *.java > details.txt
 ```
 * Compiling all the files captured in the above details.txt.
 ```bash
-mkdir output
+mkdir output && 
 javac -cp libs/* -d output @details.txt
 ```
 * Making A jar file out of it now, take all the packages of *.classes and take the fonts and icons folder then zip all the files now with a name of *codyneeraj_Server.jar* and then run
