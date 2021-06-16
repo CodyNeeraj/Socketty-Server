@@ -89,11 +89,16 @@ javac -cp libs/* -d output @details.txt
 ```
 * Making A jar file out of it now, take all the packages of *.classes and take the fonts and icons folder then zip all the files now with a name of *codyneeraj_Server.jar* and then run
 ```bash
- jar uvfe codyneeraj_Server.jar main.ServerMain
+ cd output && 
+ jar cvfe codyneeraj_Server.jar main.ServerMain .
 ```
-* Now run the jar executable using double clicking or (for verbosing) using cmd
 ```bash
- java -cp "codyneeraj_Server.jar;libs\*" main.ServerMain
+ move codyneeraj_Server.jar ..\
+```
+* Now we have a JAR containing all the resources but no classpaths so to run the jar executable do
+```bash
+cd .. && 
+java -cp "codyneeraj_Server.jar;libs\*" main.ServerMain
 ```
 Native Packing Tutorial COMING SOON !!
 ## License
