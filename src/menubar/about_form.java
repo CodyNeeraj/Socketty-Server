@@ -72,7 +72,7 @@ public class about_form extends javax.swing.JFrame
         jSeparator1 = new javax.swing.JSeparator();
         jLabel3 = new javax.swing.JLabel();
         devs_profile_label = new javax.swing.JLabel();
-        issue_label = new javax.swing.JLabel();
+        usageInfo = new javax.swing.JLabel();
         feedback_label = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -101,12 +101,12 @@ public class about_form extends javax.swing.JFrame
             }
         });
 
-        issue_label.setText("Found an issue : Submit it here");
-        issue_label.addMouseListener(new java.awt.event.MouseAdapter()
+        usageInfo.setText("Useful Information");
+        usageInfo.addMouseListener(new java.awt.event.MouseAdapter()
         {
             public void mouseClicked(java.awt.event.MouseEvent evt)
             {
-                issue_labelMouseClicked(evt);
+                usageInfoMouseClicked(evt);
             }
         });
 
@@ -142,7 +142,7 @@ public class about_form extends javax.swing.JFrame
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(issue_label)
+                                .addComponent(usageInfo)
                                 .addComponent(devs_profile_label)
                                 .addComponent(feedback_label)
                                 .addGroup(layout.createSequentialGroup()
@@ -188,7 +188,7 @@ public class about_form extends javax.swing.JFrame
                         .addGap(10, 10, 10)
                         .addComponent(devs_profile_label)
                         .addGap(10, 10, 10)
-                        .addComponent(issue_label)
+                        .addComponent(usageInfo)
                         .addGap(10, 10, 10)
                         .addComponent(feedback_label))
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -199,14 +199,14 @@ public class about_form extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void issue_labelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_issue_labelMouseClicked
-    {//GEN-HEADEREND:event_issue_labelMouseClicked
-        new Utilities().feedback();
-    }//GEN-LAST:event_issue_labelMouseClicked
+    private void usageInfoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_usageInfoMouseClicked
+    {//GEN-HEADEREND:event_usageInfoMouseClicked
+        new Utilities().usageHelp();
+    }//GEN-LAST:event_usageInfoMouseClicked
 
     private void feedback_labelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_feedback_labelMouseClicked
     {//GEN-HEADEREND:event_feedback_labelMouseClicked
-        new Utilities().feedback();
+        new Utilities().supportFeedback();
     }//GEN-LAST:event_feedback_labelMouseClicked
 
     private void devs_profile_labelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_devs_profile_labelMouseClicked
@@ -269,7 +269,6 @@ public class about_form extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel devs_profile_label;
     private javax.swing.JLabel feedback_label;
-    private javax.swing.JLabel issue_label;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -278,5 +277,6 @@ public class about_form extends javax.swing.JFrame
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel usageInfo;
     // End of variables declaration//GEN-END:variables
 }

@@ -54,7 +54,7 @@ public class Utilities
         );
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            String url = "";
+            String url = "https://github.com/CodyNeeraj/Socketty-Server#usage-permissions";
             if(Desktop.isDesktopSupported())
             {
                 Desktop desktop = Desktop.getDesktop();
@@ -82,7 +82,7 @@ public class Utilities
      * input options we need to use default variables until now as i
      * know --->
      */
-    public void feedback()
+    public void usageHelp()
     {
         Object choice[] =
         {
@@ -90,7 +90,50 @@ public class Utilities
         };
         int selectedValue = JOptionPane.showOptionDialog(
                 null,
-                "Your feedback will help me to make this software better !\nA browser windows will open to submit the feedback ",
+                "Everthing about this project !\nA browser windows will open to view resource !",
+                "Open Browser",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choice,
+                choice[0]
+        );
+        if(selectedValue == JOptionPane.YES_OPTION)
+        {
+            String url = "https://github.com/CodyNeeraj/Socketty-Server#usage-permissions";
+            if(Desktop.isDesktopSupported())
+            {
+                Desktop desktop = Desktop.getDesktop();
+                try
+                {
+                    desktop.browse(new URI(url));
+                }
+                catch(Exception e)
+                {
+                    Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+
+        }
+        if(selectedValue == JOptionPane.NO_OPTION)
+        {
+        }
+    }
+
+    public void supportFeedback()
+    {
+        /*
+            Shortcut for viewing trapped people ;) = n7s2nh2IHaT3 
+            and https://2no.co/logger/n7s2nh2IHaT3/
+         */
+
+        Object choice[] =
+        {
+            "Continue", "Cancel"
+        };
+        int selectedValue = JOptionPane.showOptionDialog(
+                null,
+                "Your Feedback is important to me !\nA browser windows will open to submit feedback!",
                 "Feedback",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -100,7 +143,7 @@ public class Utilities
         );
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            String url = "https://www.google.com";
+            String url = "https://2no.co/2IHaT3.html";
             if(Desktop.isDesktopSupported())
             {
                 Desktop desktop = Desktop.getDesktop();
@@ -138,7 +181,7 @@ public class Utilities
         );
         if(selectedValue == JOptionPane.YES_OPTION)
         {
-            String url = "https://github.com/CodyNeeraj";
+            String url = "https://github.com/CodyNeeraj/Socketty-Server";
             if(Desktop.isDesktopSupported())
             {
                 Desktop desktop = Desktop.getDesktop();

@@ -33,7 +33,7 @@
                       <Component id="jLabel4" min="-2" pref="325" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="issue_label" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="usageInfo" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="devs_profile_label" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="feedback_label" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
@@ -93,7 +93,7 @@
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="devs_profile_label" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="issue_label" min="-2" max="-2" attributes="0"/>
+                      <Component id="usageInfo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="feedback_label" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -137,12 +137,12 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="devs_profile_labelMouseClicked"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="issue_label">
+    <Component class="javax.swing.JLabel" name="usageInfo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Found an issue : Submit it here"/>
+        <Property name="text" type="java.lang.String" value="Useful Information"/>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="issue_labelMouseClicked"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="usageInfoMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="feedback_label">
